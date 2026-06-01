@@ -53,6 +53,7 @@ body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',system
 .nb.green{background:var(--green);color:#fff}
 .nb.red{background:var(--red);color:#fff}
 .nb.amber{background:var(--amber);color:#000}
+.nb.purple{background:var(--purple);color:#fff}
 .sb-foot{padding:12px 18px;border-top:1px solid var(--b2);display:flex;align-items:center;gap:10px}
 .ua{width:32px;height:32px;background:linear-gradient(135deg,var(--brand),#8B1E14);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;box-shadow:0 2px 10px rgba(196,69,54,.3)}
 
@@ -290,6 +291,26 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
 .doc-status-stamp.paid{color:#10B981;border-color:#10B981}
 .doc-status-stamp.overdue{color:#EF4444;border-color:#EF4444}
 .doc-status-stamp.approved{color:#8B5CF6;border-color:#8B5CF6}
+/* ── REFERRALS ── */
+.rf-status-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px}
+.rf-status-badge.pending{background:rgba(245,158,11,.12);color:#FCD34D}
+.rf-status-badge.qualified{background:rgba(59,130,246,.12);color:#60A5FA}
+.rf-status-badge.converted{background:rgba(139,92,246,.12);color:#A78BFA}
+.rf-status-badge.paid{background:rgba(16,185,129,.12);color:#34D399}
+
+/* ── BIRTHDAYS ── */
+.bd-card{background:var(--card);border:1px solid var(--b1);border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:14px;transition:all .2s;box-shadow:var(--shadow-card)}
+.bd-card:hover{border-color:rgba(196,69,54,.2);transform:translateY(-2px)}
+.bd-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--brand),#8B1E14);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0}
+.bd-avatar.soon{background:linear-gradient(135deg,#F59E0B,#D97706)}
+.bd-avatar.today{background:linear-gradient(135deg,#10B981,#059669)}
+.bd-name{font-size:13px;font-weight:700;color:var(--white)}
+.bd-detail{font-size:11px;color:var(--muted);margin-top:2px}
+.bd-days{font-size:11px;font-weight:800;padding:3px 9px;border-radius:20px;margin-left:auto;flex-shrink:0}
+.bd-days.today{background:rgba(16,185,129,.15);color:var(--green)}
+.bd-days.soon{background:rgba(245,158,11,.15);color:var(--amber)}
+.bd-days.upcoming{background:rgba(255,255,255,.07);color:var(--muted)}
+
 /* ══════════════════════════════════════
    MOBILE RESPONSIVE  (≤ 768px)
 ══════════════════════════════════════ */
@@ -480,6 +501,8 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
     <div class="nav-sec">Customers</div>
     <div class="ni" onclick="nav('customers')"><span class="ni-icon"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 00-1-1h-2a1 1 0 00-1 1v5m4 0H9"/></svg></span> Customers</div>
     <div class="ni" onclick="nav('maintenance')"><span class="ni-icon"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg></span> Maintenance Plans</div>
+    <div class="ni" onclick="nav('referrals')"><span class="ni-icon"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg></span> Referrals <span class="nb purple" id="nb-referrals" style="display:none">0</span></div>
+    <div class="ni" onclick="nav('birthdays')"><span class="ni-icon"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21l-9-4.5L3 21V5a2 2 0 012-2h14a2 2 0 012 2v16z"/></svg></span> Birthdays <span class="nb amber" id="nb-birthdays" style="display:none">0</span></div>
     <div class="nav-sec" id="nav-sec-admin" style="display:none">Admin</div>
     <div class="ni" id="ni-users" style="display:none" onclick="nav('users')"><span class="ni-icon"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg></span> User Management</div>
     <div class="ni" onclick="nav('account')"><span class="ni-icon"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"/></svg></span> My Account</div>
@@ -708,6 +731,47 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
       </div>
     </div>
 
+
+    <!-- ══ REFERRALS ══ -->
+    <div class="page" id="page-referrals">
+      <div class="section-hdr">
+        <div class="section-title">Referrals</div>
+        <button class="btn btn-brand btn-sm" onclick="openModal('modal-new-referral')"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Add Referral</button>
+      </div>
+      <!-- Summary cards -->
+      <div class="stat-grid" style="margin-bottom:20px" id="rf-stat-grid">
+        <div class="sc purple"><div class="sc-ico-wrap"><svg width="20" height="20" fill="none" stroke="var(--purple)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg></div><div class="sc-label">Total Referrals</div><div class="sc-val purple" id="rf-stat-total">0</div></div>
+        <div class="sc green"><div class="sc-ico-wrap"><svg width="20" height="20" fill="none" stroke="var(--green)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="sc-label">Converted</div><div class="sc-val green" id="rf-stat-converted">0</div></div>
+        <div class="sc amber"><div class="sc-ico-wrap"><svg width="20" height="20" fill="none" stroke="var(--amber)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="sc-label">Pending</div><div class="sc-val amber" id="rf-stat-pending">0</div></div>
+        <div class="sc brand"><div class="sc-ico-wrap"><svg width="20" height="20" fill="none" stroke="var(--brand)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="sc-label">Rewards Paid</div><div class="sc-val brand" id="rf-stat-rewards">R0</div></div>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <table>
+          <thead><tr><th>Referred By</th><th>Referee</th><th>Service</th><th>Date</th><th>Reward</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="referrals-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ BIRTHDAYS ══ -->
+    <div class="page" id="page-birthdays">
+      <div class="section-hdr">
+        <div class="section-title">Birthdays</div>
+        <button class="btn btn-brand btn-sm" onclick="openModal('modal-new-birthday')"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Add Birthday</button>
+      </div>
+      <!-- Upcoming this week -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title"><svg width="14" height="14" fill="none" stroke="var(--amber)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg> Upcoming — Next 30 Days</div>
+        <div id="bd-upcoming-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px"></div>
+      </div>
+      <!-- All birthdays -->
+      <div class="card" style="padding:0;overflow:hidden">
+        <table>
+          <thead><tr><th>Name</th><th>Type</th><th>Birthday</th><th>Age</th><th>Days Until</th><th>Contact</th><th>Actions</th></tr></thead>
+          <tbody id="birthdays-tbody"></tbody>
+        </table>
+      </div>
+    </div>
 
     <!-- ══ USERS ══ -->
     <div class="page" id="page-users">
@@ -1006,6 +1070,74 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
     <div style="display:flex;gap:10px;justify-content:flex-end">
       <button class="btn btn-ghost" onclick="closeModal('modal-new-user')">Cancel</button>
       <button class="btn btn-brand" id="nu-submit-btn" onclick="submitUser()">Add User</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MODAL: NEW REFERRAL ══════════ -->
+<div class="overlay" id="modal-new-referral">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-title">
+      <span id="modal-referral-title">Add Referral</span>
+      <button class="modal-close" onclick="closeModal('modal-new-referral')">✕</button>
+    </div>
+    <input type="hidden" id="nr-edit-id">
+    <div class="form-grid">
+      <div class="form-row"><label class="form-label">Referred By (Name)</label><input class="form-input" id="nr-referrer-name" placeholder="e.g. Thandi Mokoena"></div>
+      <div class="form-row"><label class="form-label">Referrer Phone</label><input class="form-input" id="nr-referrer-phone" placeholder="+27 72 000 0000"></div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row"><label class="form-label">Referee Name</label><input class="form-input" id="nr-referee-name" placeholder="New contact's name"></div>
+      <div class="form-row"><label class="form-label">Referee Phone</label><input class="form-input" id="nr-referee-phone" placeholder="+27 83 000 0000"></div>
+    </div>
+    <div class="form-row"><label class="form-label">Referee Email</label><input class="form-input" type="email" id="nr-referee-email" placeholder="referee@email.com"></div>
+    <div class="form-grid">
+      <div class="form-row"><label class="form-label">Service Required</label>
+        <select class="form-input" id="nr-service">
+          <option>Installation</option><option>Repair</option><option>Maintenance</option><option>Ventilation</option><option>Refrigeration</option><option>Air Quality</option><option>Duct Systems</option>
+        </select>
+      </div>
+      <div class="form-row"><label class="form-label">Status</label>
+        <select class="form-input" id="nr-status">
+          <option>Pending</option><option>Qualified</option><option>Converted</option><option>Paid</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row"><label class="form-label">Date</label><input class="form-input" type="date" id="nr-date"></div>
+      <div class="form-row"><label class="form-label">Reward Amount (R)</label><input class="form-input" type="number" id="nr-reward" placeholder="500"></div>
+    </div>
+    <div class="form-row"><label class="form-label">Notes</label><textarea class="form-input" id="nr-notes" rows="2" placeholder="Any notes about this referral..."></textarea></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal('modal-new-referral')">Cancel</button>
+      <button class="btn btn-brand" id="nr-submit-btn" onclick="submitReferral()">Add Referral</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MODAL: NEW BIRTHDAY ══════════ -->
+<div class="overlay" id="modal-new-birthday">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-title">
+      <span id="modal-birthday-title">Add Birthday</span>
+      <button class="modal-close" onclick="closeModal('modal-new-birthday')">✕</button>
+    </div>
+    <input type="hidden" id="nb2-edit-id">
+    <div class="form-row"><label class="form-label">Full Name</label><input class="form-input" id="nb2-name" placeholder="e.g. Thandi Mokoena"></div>
+    <div class="form-grid">
+      <div class="form-row"><label class="form-label">Type</label>
+        <select class="form-input" id="nb2-type">
+          <option>Customer</option><option>Lead</option><option>Technician</option>
+        </select>
+      </div>
+      <div class="form-row"><label class="form-label">Birthday</label><input class="form-input" type="date" id="nb2-birthday"></div>
+    </div>
+    <div class="form-row"><label class="form-label">Phone</label><input class="form-input" id="nb2-phone" placeholder="+27 72 000 0000"></div>
+    <div class="form-row"><label class="form-label">Email</label><input class="form-input" type="email" id="nb2-email" placeholder="name@email.com"></div>
+    <div class="form-row"><label class="form-label">Notes</label><textarea class="form-input" id="nb2-notes" rows="2" placeholder="e.g. Prefers WhatsApp greeting"></textarea></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal('modal-new-birthday')">Cancel</button>
+      <button class="btn btn-brand" id="nb2-submit-btn" onclick="submitBirthday()">Add Birthday</button>
     </div>
   </div>
 </div>
@@ -1335,7 +1467,13 @@ function loadState(){
   try{
     const s = JSON.parse(localStorage.getItem('rv_state'));
     // If saved state has no technicians it's empty/stale — load demo data
-    if(s && s.techs && s.techs.length) return s;
+    if(s && s.techs && s.techs.length){
+      if(!s.referrals) s.referrals=[];
+      if(!s.birthdays) s.birthdays=[];
+      if(!s.referralCounter) s.referralCounter=s.referrals.length;
+      if(!s.birthdayCounter) s.birthdayCounter=s.birthdays.length;
+      return s;
+    }
     return defaultState();
   }
   catch(e){ return defaultState(); }
@@ -1345,7 +1483,7 @@ function defaultState(){
   const dd=(n)=>{const t=new Date();t.setDate(t.getDate()+n);return t.toISOString().split('T')[0];};
   return {
   weekOffset:0,
-  techCounter:6, customerCounter:9, leadCounter:14, jobCounter:11, quoteCounter:8, invoiceCounter:9, planCounter:6,
+  techCounter:6, customerCounter:9, leadCounter:14, jobCounter:11, quoteCounter:8, invoiceCounter:9, planCounter:6, referralCounter:8, birthdayCounter:12,
   techs:[
     {id:'T1',name:'Sipho Nkosi',    phone:'+27 82 411 0023',spec:'AC Installation',  cert:'Senior Technician', jobs:14,active:true},
     {id:'T2',name:'Thabo Dlamini',  phone:'+27 73 502 1188',spec:'Refrigeration',    cert:'Technician',        jobs:9, active:true},
@@ -1422,6 +1560,30 @@ function defaultState(){
     {id:'MP-004',customer:'Sandton Office Park',     plan:'Standard (2x per year)',units:8, fee:3400,nextService:dd(-3), status:'Active'},
     {id:'MP-005',customer:'FreshCold Logistics',     plan:'24/7 Priority',         units:4, fee:5500,nextService:dd(42), status:'Active'},
     {id:'MP-006',customer:'Marco da Silva',          plan:'Basic (1x per year)',   units:2, fee:450, nextService:dd(-18),status:'Paused'}
+  ],
+  referrals:[
+    {id:'RF-001',referrerName:'Thandi Mokoena',referrerPhone:'+27 72 419 3380',refereeName:'Sipho Dlamini',refereePhone:'+27 83 441 2200',refereeEmail:'sipho.d@gmail.com',service:'Installation',date:'2026-02-14',status:'Converted',reward:500,notes:'Referred neighbour from her complex'},
+    {id:'RF-002',referrerName:'Bryanston Medical Centre',referrerPhone:'+27 11 706 2200',refereeName:'Northgate Day Hospital',refereePhone:'+27 11 794 3300',refereeEmail:'facilities@northgate.co.za',service:'Ventilation',date:'2026-03-01',status:'Qualified',reward:1500,notes:'Referred sister facility'},
+    {id:'RF-003',referrerName:'Marco da Silva',referrerPhone:'+27 71 330 8840',refereeName:'Celeste Ferreira',refereePhone:'+27 82 557 6610',refereeEmail:'celeste.f@gmail.com',service:'Repair',date:'2026-03-18',status:'Converted',reward:300,notes:'Neighbour in Olivedale'},
+    {id:'RF-004',referrerName:'Sandton Office Park',referrerPhone:'+27 11 783 4400',refereeName:'Rosebank Towers Ltd',refereePhone:'+27 11 447 9900',refereeEmail:'building@rosebanktowers.co.za',service:'Maintenance',date:'2026-04-02',status:'Paid',reward:2000,notes:'Referred property manager'},
+    {id:'RF-005',referrerName:'Lebo Sithole',referrerPhone:'+27 83 661 2290',refereeName:'Nandi Sithole',refereePhone:'+27 79 882 1104',refereeEmail:'nandi.sithole@gmail.com',service:'Installation',date:'2026-04-10',status:'Pending',reward:500,notes:'Sister in Fourways'},
+    {id:'RF-006',referrerName:'FreshCold Logistics',referrerPhone:'+27 11 394 8821',refereeName:'CoolStore Warehousing',refereePhone:'+27 11 392 7700',refereeEmail:'ops@coolstore.co.za',service:'Refrigeration',date:'2026-04-22',status:'Qualified',reward:1000,notes:'Industry contact'},
+    {id:'RF-007',referrerName:'Nokwanda Dube',referrerPhone:'+27 64 572 1103',refereeName:'Thandeka Ndlovu',refereePhone:'+27 71 229 4450',refereeEmail:'thandeka.n@gmail.com',service:'Installation',date:'2026-05-05',status:'Pending',reward:500,notes:'Friend from Centurion'},
+    {id:'RF-008',referrerName:'Greenleaf Property Group',referrerPhone:'+27 11 568 4000',refereeName:'Hyde Park Estate',refereePhone:'+27 11 341 8800',refereeEmail:'maintenance@hydeparkestate.co.za',service:'Ventilation',date:'2026-05-12',status:'Converted',reward:2500,notes:'Long-term client referral'}
+  ],
+  birthdays:[
+    {id:'BD-001',name:'Thandi Mokoena',type:'Customer',phone:'+27 72 419 3380',email:'thandi.mokoena@gmail.com',birthday:'1985-05-30',notes:'Long-term residential client'},
+    {id:'BD-002',name:'Sipho Nkosi',type:'Technician',phone:'+27 82 411 0023',email:'sipho.nkosi@robustvent.co.za',birthday:'1990-06-04',notes:'Senior technician'},
+    {id:'BD-003',name:'Lebo Sithole',type:'Customer',phone:'+27 83 661 2290',email:'lebo.sithole@outlook.com',birthday:'1988-06-12',notes:''},
+    {id:'BD-004',name:'Marco da Silva',type:'Customer',phone:'+27 71 330 8840',email:'marco.dasilva@gmail.com',birthday:'1979-07-22',notes:''},
+    {id:'BD-005',name:'Priya Naidoo',type:'Technician',phone:'+27 83 225 6671',email:'priya.naidoo@robustvent.co.za',birthday:'1992-08-15',notes:''},
+    {id:'BD-006',name:'Nokwanda Dube',type:'Customer',phone:'+27 64 572 1103',email:'nokwanda.dube@gmail.com',birthday:'1995-09-03',notes:''},
+    {id:'BD-007',name:'Ayanda Zulu',type:'Technician',phone:'+27 79 334 9910',email:'ayanda.zulu@robustvent.co.za',birthday:'1993-10-18',notes:''},
+    {id:'BD-008',name:'Dewald Botha',type:'Lead',phone:'+27 61 334 5580',email:'dewald@bothacc.co.za',birthday:'1975-11-07',notes:'Potential big contract client'},
+    {id:'BD-009',name:'Nomsa Mahlangu',type:'Lead',phone:'+27 79 228 3310',email:'nomsa.mahlangu@gmail.com',birthday:'1982-12-20',notes:''},
+    {id:'BD-010',name:'Ruan van Wyk',type:'Technician',phone:'+27 61 887 4400',email:'ruan.vanwyk@robustvent.co.za',birthday:'1987-01-14',notes:''},
+    {id:'BD-011',name:'Heinrich Swanepoel',type:'Customer',phone:'+27 82 003 4421',email:'hswanepoel@swanlaw.co.za',birthday:'1981-02-28',notes:'Law firm client'},
+    {id:'BD-012',name:'Zanele Khumalo',type:'Lead',phone:'+27 73 519 8840',email:'zanele@zkcatering.co.za',birthday:'1990-04-05',notes:'Catering company lead'}
   ]
   };
 }
@@ -1521,6 +1683,34 @@ function seed(){
     {id:'MP-006',customer:'Marco da Silva',          plan:'Basic (1x per year)',   units:2, fee:450, nextService:dd(-18),status:'Paused'}
   ];
 
+  state.referralCounter=8;
+  state.referrals=[
+    {id:'RF-001',referrerName:'Thandi Mokoena',referrerPhone:'+27 72 419 3380',refereeName:'Sipho Dlamini',refereePhone:'+27 83 441 2200',refereeEmail:'sipho.d@gmail.com',service:'Installation',date:'2026-02-14',status:'Converted',reward:500,notes:'Referred neighbour from her complex'},
+    {id:'RF-002',referrerName:'Bryanston Medical Centre',referrerPhone:'+27 11 706 2200',refereeName:'Northgate Day Hospital',refereePhone:'+27 11 794 3300',refereeEmail:'facilities@northgate.co.za',service:'Ventilation',date:'2026-03-01',status:'Qualified',reward:1500,notes:'Referred sister facility'},
+    {id:'RF-003',referrerName:'Marco da Silva',referrerPhone:'+27 71 330 8840',refereeName:'Celeste Ferreira',refereePhone:'+27 82 557 6610',refereeEmail:'celeste.f@gmail.com',service:'Repair',date:'2026-03-18',status:'Converted',reward:300,notes:'Neighbour in Olivedale'},
+    {id:'RF-004',referrerName:'Sandton Office Park',referrerPhone:'+27 11 783 4400',refereeName:'Rosebank Towers Ltd',refereePhone:'+27 11 447 9900',refereeEmail:'building@rosebanktowers.co.za',service:'Maintenance',date:'2026-04-02',status:'Paid',reward:2000,notes:'Referred property manager'},
+    {id:'RF-005',referrerName:'Lebo Sithole',referrerPhone:'+27 83 661 2290',refereeName:'Nandi Sithole',refereePhone:'+27 79 882 1104',refereeEmail:'nandi.sithole@gmail.com',service:'Installation',date:'2026-04-10',status:'Pending',reward:500,notes:'Sister in Fourways'},
+    {id:'RF-006',referrerName:'FreshCold Logistics',referrerPhone:'+27 11 394 8821',refereeName:'CoolStore Warehousing',refereePhone:'+27 11 392 7700',refereeEmail:'ops@coolstore.co.za',service:'Refrigeration',date:'2026-04-22',status:'Qualified',reward:1000,notes:'Industry contact'},
+    {id:'RF-007',referrerName:'Nokwanda Dube',referrerPhone:'+27 64 572 1103',refereeName:'Thandeka Ndlovu',refereePhone:'+27 71 229 4450',refereeEmail:'thandeka.n@gmail.com',service:'Installation',date:'2026-05-05',status:'Pending',reward:500,notes:'Friend from Centurion'},
+    {id:'RF-008',referrerName:'Greenleaf Property Group',referrerPhone:'+27 11 568 4000',refereeName:'Hyde Park Estate',refereePhone:'+27 11 341 8800',refereeEmail:'maintenance@hydeparkestate.co.za',service:'Ventilation',date:'2026-05-12',status:'Converted',reward:2500,notes:'Long-term client referral'}
+  ];
+
+  state.birthdayCounter=12;
+  state.birthdays=[
+    {id:'BD-001',name:'Thandi Mokoena',type:'Customer',phone:'+27 72 419 3380',email:'thandi.mokoena@gmail.com',birthday:'1985-05-30',notes:'Long-term residential client'},
+    {id:'BD-002',name:'Sipho Nkosi',type:'Technician',phone:'+27 82 411 0023',email:'sipho.nkosi@robustvent.co.za',birthday:'1990-06-04',notes:'Senior technician'},
+    {id:'BD-003',name:'Lebo Sithole',type:'Customer',phone:'+27 83 661 2290',email:'lebo.sithole@outlook.com',birthday:'1988-06-12',notes:''},
+    {id:'BD-004',name:'Marco da Silva',type:'Customer',phone:'+27 71 330 8840',email:'marco.dasilva@gmail.com',birthday:'1979-07-22',notes:''},
+    {id:'BD-005',name:'Priya Naidoo',type:'Technician',phone:'+27 83 225 6671',email:'priya.naidoo@robustvent.co.za',birthday:'1992-08-15',notes:''},
+    {id:'BD-006',name:'Nokwanda Dube',type:'Customer',phone:'+27 64 572 1103',email:'nokwanda.dube@gmail.com',birthday:'1995-09-03',notes:''},
+    {id:'BD-007',name:'Ayanda Zulu',type:'Technician',phone:'+27 79 334 9910',email:'ayanda.zulu@robustvent.co.za',birthday:'1993-10-18',notes:''},
+    {id:'BD-008',name:'Dewald Botha',type:'Lead',phone:'+27 61 334 5580',email:'dewald@bothacc.co.za',birthday:'1975-11-07',notes:'Potential big contract client'},
+    {id:'BD-009',name:'Nomsa Mahlangu',type:'Lead',phone:'+27 79 228 3310',email:'nomsa.mahlangu@gmail.com',birthday:'1982-12-20',notes:''},
+    {id:'BD-010',name:'Ruan van Wyk',type:'Technician',phone:'+27 61 887 4400',email:'ruan.vanwyk@robustvent.co.za',birthday:'1987-01-14',notes:''},
+    {id:'BD-011',name:'Heinrich Swanepoel',type:'Customer',phone:'+27 82 003 4421',email:'hswanepoel@swanlaw.co.za',birthday:'1981-02-28',notes:'Law firm client'},
+    {id:'BD-012',name:'Zanele Khumalo',type:'Lead',phone:'+27 73 519 8840',email:'zanele@zkcatering.co.za',birthday:'1990-04-05',notes:'Catering company lead'}
+  ];
+
   saveState();
 }
 
@@ -1550,13 +1740,15 @@ const PAGE_TITLES = {
   dashboard:'Dashboard', leads:'Leads', pipeline:'Pipeline', quotes:'Quotes',
   jobs:'Active Jobs', schedule:'Schedule', technicians:'Technicians',
   invoices:'Invoices', customers:'Customers', maintenance:'Maintenance Plans',
+  referrals:'Referrals', birthdays:'Birthdays',
   users:'User Accounts', account:'My Account'
 };
 const PAGE_SUBS = {
   dashboard:'Overview & KPIs', leads:'All enquiries', pipeline:'Sales funnel',
   quotes:'Pending approvals', jobs:'Field operations', schedule:'Team calendar',
   technicians:'Field team', invoices:'Billing', customers:'Client database',
-  maintenance:'Service contracts', users:'Manage CRM users', account:'Profile & security',
+  maintenance:'Service contracts', referrals:'Track & reward referrals', birthdays:'Client & team birthdays',
+  users:'Manage CRM users', account:'Profile & security',
 };
 
 function nav(page){
@@ -1578,6 +1770,8 @@ function nav(page){
   if(clv){ clv.style.display=''; cdv.style.display='none'; }
   if(page==='users')   renderUsers();
   if(page==='account') renderAccountPage();
+  if(page==='referrals') renderReferrals();
+  if(page==='birthdays') renderBirthdays();
   render();
 }
 
@@ -1951,6 +2145,8 @@ function render(){
   renderInvoices();
   renderCustomers();
   renderPlans();
+  renderReferrals();
+  renderBirthdays();
   populateTechDropdown();
 }
 
@@ -2760,6 +2956,228 @@ document.getElementById('doc-overlay').addEventListener('click',function(e){ if(
 // GROWTH ENGINE
 // ═══════════════════════════════════════════════
 
+
+// ═══════════════════════════════════════════════
+// REFERRALS
+// ═══════════════════════════════════════════════
+function renderReferrals(){
+  const refs = state.referrals||[];
+  const total=refs.length, converted=refs.filter(r=>r.status==='Converted'||r.status==='Paid').length;
+  const pending=refs.filter(r=>r.status==='Pending').length;
+  const rewards=refs.filter(r=>r.status==='Paid').reduce((s,r)=>s+(r.reward||0),0);
+  const rfTotal=document.getElementById('rf-stat-total');
+  const rfConv=document.getElementById('rf-stat-converted');
+  const rfPend=document.getElementById('rf-stat-pending');
+  const rfRew=document.getElementById('rf-stat-rewards');
+  if(rfTotal) rfTotal.textContent=total;
+  if(rfConv) rfConv.textContent=converted;
+  if(rfPend) rfPend.textContent=pending;
+  if(rfRew) rfRew.textContent='R '+rewards.toLocaleString('en-ZA');
+  const nb=document.getElementById('nb-referrals');
+  if(nb){nb.textContent=pending||'';nb.style.display=pending?'':'none';}
+  const tbody=document.getElementById('referrals-tbody');
+  if(!tbody)return;
+  if(!refs.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:32px">No referrals yet.</td></tr>';return;}
+  tbody.innerHTML=refs.map(r=>{
+    const sc=r.status.toLowerCase();
+    const waMsg=encodeURIComponent(`Hi ${r.refereeName}, you were referred to us by ${r.referrerName}. We specialise in HVAC & ventilation. Can we help you with your ${r.service} needs?`);
+    return `<tr>
+      <td data-label="Referred By"><div style="font-weight:700;color:var(--white)">${esc(r.referrerName)}</div><div style="font-size:11px;color:var(--muted)">${esc(r.referrerPhone||'')}</div></td>
+      <td data-label="Referee"><div style="font-weight:600;color:var(--text)">${esc(r.refereeName)}</div><div style="font-size:11px;color:var(--muted)">${esc(r.refereePhone||'')}</div></td>
+      <td data-label="Service">${esc(r.service||'')}</td>
+      <td data-label="Date">${esc(r.date||'')}</td>
+      <td data-label="Reward" style="font-weight:700;color:var(--brand)">R ${(r.reward||0).toLocaleString('en-ZA')}</td>
+      <td data-label="Status"><span class="rf-status-badge ${sc}">${esc(r.status)}</span></td>
+      <td data-label="Actions"><div style="display:flex;gap:5px;flex-wrap:wrap">
+        ${r.refereePhone?`<a class="wa-btn" style="padding:4px 9px;font-size:11px" href="https://wa.me/${r.refereePhone.replace(/\D/g,'')}&text=${waMsg}" target="_blank">WhatsApp</a>`:''}
+        <button class="btn btn-ghost btn-sm" onclick="editReferral('${r.id}')">Edit</button>
+        <button class="btn btn-sm" style="background:rgba(239,68,68,.12);color:#FCA5A5;border:none;border-radius:7px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer" onclick="deleteReferral('${r.id}')">Del</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function submitReferral(){
+  const editId=document.getElementById('nr-edit-id').value.trim();
+  const vals={
+    referrerName:document.getElementById('nr-referrer-name').value.trim(),
+    referrerPhone:document.getElementById('nr-referrer-phone').value.trim(),
+    refereeName:document.getElementById('nr-referee-name').value.trim(),
+    refereePhone:document.getElementById('nr-referee-phone').value.trim(),
+    refereeEmail:document.getElementById('nr-referee-email').value.trim(),
+    service:document.getElementById('nr-service').value,
+    status:document.getElementById('nr-status').value,
+    date:document.getElementById('nr-date').value,
+    reward:parseFloat(document.getElementById('nr-reward').value)||0,
+    notes:document.getElementById('nr-notes').value.trim()
+  };
+  if(!vals.referrerName||!vals.refereeName){alert('Referrer and Referee names are required.');return;}
+  if(editId){
+    state.referrals=state.referrals.map(r=>r.id===editId?{...r,...vals}:r);
+  } else {
+    state.referralCounter=(state.referralCounter||0)+1;
+    state.referrals.unshift({id:'RF-'+String(state.referralCounter).padStart(3,'0'),...vals});
+  }
+  saveState();closeModal('modal-new-referral');
+  document.getElementById('nr-edit-id').value='';
+  document.getElementById('modal-referral-title').textContent='Add Referral';
+  document.getElementById('nr-submit-btn').textContent='Add Referral';
+  renderReferrals();
+}
+
+function editReferral(id){
+  const r=state.referrals.find(x=>x.id===id);if(!r)return;
+  document.getElementById('nr-edit-id').value=id;
+  document.getElementById('nr-referrer-name').value=r.referrerName||'';
+  document.getElementById('nr-referrer-phone').value=r.referrerPhone||'';
+  document.getElementById('nr-referee-name').value=r.refereeName||'';
+  document.getElementById('nr-referee-phone').value=r.refereePhone||'';
+  document.getElementById('nr-referee-email').value=r.refereeEmail||'';
+  document.getElementById('nr-service').value=r.service||'Installation';
+  document.getElementById('nr-status').value=r.status||'Pending';
+  document.getElementById('nr-date').value=r.date||'';
+  document.getElementById('nr-reward').value=r.reward||'';
+  document.getElementById('nr-notes').value=r.notes||'';
+  document.getElementById('modal-referral-title').textContent='Edit Referral';
+  document.getElementById('nr-submit-btn').textContent='Save Changes';
+  openModal('modal-new-referral');
+}
+
+function deleteReferral(id){
+  if(!confirm('Delete this referral?'))return;
+  state.referrals=state.referrals.filter(r=>r.id!==id);
+  saveState();renderReferrals();
+}
+
+// ═══════════════════════════════════════════════
+// BIRTHDAYS
+// ═══════════════════════════════════════════════
+function bdDaysUntil(birthdayStr){
+  if(!birthdayStr)return 999;
+  const today=new Date();
+  const bd=new Date(birthdayStr);
+  const next=new Date(today.getFullYear(),bd.getMonth(),bd.getDate());
+  if(next<today) next.setFullYear(today.getFullYear()+1);
+  return Math.round((next-today)/86400000);
+}
+
+function bdAge(birthdayStr){
+  if(!birthdayStr)return '—';
+  const today=new Date();
+  const bd=new Date(birthdayStr);
+  let age=today.getFullYear()-bd.getFullYear();
+  if(today<new Date(today.getFullYear(),bd.getMonth(),bd.getDate())) age--;
+  return age;
+}
+
+function bdFormatDate(birthdayStr){
+  if(!birthdayStr)return '—';
+  const bd=new Date(birthdayStr);
+  return bd.toLocaleDateString('en-ZA',{day:'numeric',month:'long'});
+}
+
+function renderBirthdays(){
+  const bds=(state.birthdays||[]).sort((a,b)=>bdDaysUntil(a.birthday)-bdDaysUntil(b.birthday));
+  // Upcoming 30 days
+  const upcoming=bds.filter(b=>bdDaysUntil(b.birthday)<=30);
+  const nb=document.getElementById('nb-birthdays');
+  if(nb){nb.textContent=upcoming.length||'';nb.style.display=upcoming.length?'':'none';}
+  const upEl=document.getElementById('bd-upcoming-list');
+  if(upEl){
+    if(!upcoming.length){upEl.innerHTML='<div style="font-size:12px;color:var(--muted);padding:8px 0">No birthdays in the next 30 days.</div>';
+    } else {
+      upEl.innerHTML=upcoming.map(b=>{
+        const days=bdDaysUntil(b.birthday);
+        const cls=days===0?'today':days<=7?'soon':'upcoming';
+        const label=days===0?'🎂 Today!':days===1?'Tomorrow':`${days} days`;
+        const initials=b.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+        const waMsg=encodeURIComponent(`Happy Birthday ${b.name.split(' ')[0]}! 🎂 Wishing you a wonderful day from the RobustVent team!`);
+        return `<div class="bd-card">
+          <div class="bd-avatar ${cls}">${esc(initials)}</div>
+          <div style="flex:1;min-width:0">
+            <div class="bd-name">${esc(b.name)}</div>
+            <div class="bd-detail">${esc(b.type)} · ${bdFormatDate(b.birthday)} · Age ${bdAge(b.birthday)}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+            <span class="bd-days ${cls}">${label}</span>
+            ${b.phone?`<a class="wa-btn" style="padding:3px 8px;font-size:10px" href="https://wa.me/${b.phone.replace(/\D/g,'')}&text=${waMsg}" target="_blank">WA</a>`:''}
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+  // Full table
+  const tbody=document.getElementById('birthdays-tbody');
+  if(!tbody)return;
+  if(!bds.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:32px">No birthdays added yet.</td></tr>';return;}
+  tbody.innerHTML=bds.map(b=>{
+    const days=bdDaysUntil(b.birthday);
+    const cls=days===0?'today':days<=7?'soon':'upcoming';
+    const label=days===0?'Today':days===1?'Tomorrow':`${days} days`;
+    const waMsg=encodeURIComponent(`Happy Birthday ${b.name.split(' ')[0]}! 🎂 Wishing you a wonderful day from the RobustVent team!`);
+    const emailSubj=encodeURIComponent(`Happy Birthday from RobustVent!`);
+    const emailBody=encodeURIComponent(`Hi ${b.name.split(' ')[0]},\n\nWishing you a very Happy Birthday from all of us at RobustVent!\n\nWarm regards,\nThe RobustVent Team`);
+    return `<tr>
+      <td data-label="Name"><div style="font-weight:700;color:var(--white)">${esc(b.name)}</div></td>
+      <td data-label="Type"><span class="badge ${b.type==='Customer'?'brand':b.type==='Technician'?'purple':'blue'}">${esc(b.type)}</span></td>
+      <td data-label="Birthday">${bdFormatDate(b.birthday)}</td>
+      <td data-label="Age">${bdAge(b.birthday)}</td>
+      <td data-label="Days Until"><span class="bd-days ${cls}" style="display:inline-block">${label}</span></td>
+      <td data-label="Contact"><div style="display:flex;gap:5px;flex-wrap:wrap">
+        ${b.phone?`<a class="wa-btn" style="padding:3px 8px;font-size:10px" href="https://wa.me/${b.phone.replace(/\D/g,'')}&text=${waMsg}" target="_blank">WhatsApp</a>`:''}
+        ${b.email?`<a class="btn btn-ghost btn-sm" style="text-decoration:none" href="mailto:${b.email}?subject=${emailSubj}&body=${emailBody}">Email</a>`:''}
+      </div></td>
+      <td data-label="Actions"><div style="display:flex;gap:5px">
+        <button class="btn btn-ghost btn-sm" onclick="editBirthday('${b.id}')">Edit</button>
+        <button class="btn btn-sm" style="background:rgba(239,68,68,.12);color:#FCA5A5;border:none;border-radius:7px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer" onclick="deleteBirthday('${b.id}')">Del</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function submitBirthday(){
+  const editId=document.getElementById('nb2-edit-id').value.trim();
+  const vals={
+    name:document.getElementById('nb2-name').value.trim(),
+    type:document.getElementById('nb2-type').value,
+    birthday:document.getElementById('nb2-birthday').value,
+    phone:document.getElementById('nb2-phone').value.trim(),
+    email:document.getElementById('nb2-email').value.trim(),
+    notes:document.getElementById('nb2-notes').value.trim()
+  };
+  if(!vals.name||!vals.birthday){alert('Name and birthday date are required.');return;}
+  if(editId){
+    state.birthdays=state.birthdays.map(b=>b.id===editId?{...b,...vals}:b);
+  } else {
+    state.birthdayCounter=(state.birthdayCounter||0)+1;
+    state.birthdays.unshift({id:'BD-'+String(state.birthdayCounter).padStart(3,'0'),...vals});
+  }
+  saveState();closeModal('modal-new-birthday');
+  document.getElementById('nb2-edit-id').value='';
+  document.getElementById('modal-birthday-title').textContent='Add Birthday';
+  document.getElementById('nb2-submit-btn').textContent='Add Birthday';
+  renderBirthdays();
+}
+
+function editBirthday(id){
+  const b=state.birthdays.find(x=>x.id===id);if(!b)return;
+  document.getElementById('nb2-edit-id').value=id;
+  document.getElementById('nb2-name').value=b.name||'';
+  document.getElementById('nb2-type').value=b.type||'Customer';
+  document.getElementById('nb2-birthday').value=b.birthday||'';
+  document.getElementById('nb2-phone').value=b.phone||'';
+  document.getElementById('nb2-email').value=b.email||'';
+  document.getElementById('nb2-notes').value=b.notes||'';
+  document.getElementById('modal-birthday-title').textContent='Edit Birthday';
+  document.getElementById('nb2-submit-btn').textContent='Save Changes';
+  openModal('modal-new-birthday');
+}
+
+function deleteBirthday(id){
+  if(!confirm('Delete this birthday?'))return;
+  state.birthdays=state.birthdays.filter(b=>b.id!==id);
+  saveState();renderBirthdays();
+}
 
 // ═══════════════════════════════════════════════
 // INIT
