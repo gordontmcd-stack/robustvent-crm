@@ -1472,6 +1472,18 @@ function loadState(){
       if(!s.birthdays) s.birthdays=[];
       if(!s.referralCounter) s.referralCounter=s.referrals.length;
       if(!s.birthdayCounter) s.birthdayCounter=s.birthdays.length;
+      // Inject showcase birthdays (upcoming dates) if not already present
+      const showcaseBds=[
+        {id:'BD-013',name:'Bongani Mthembu',type:'Customer',phone:'+27 82 334 7710',email:'bongani.mthembu@gmail.com',birthday:'1988-05-29',notes:'Birthday TODAY 🎂'},
+        {id:'BD-014',name:'Lerato Molefe',type:'Lead',phone:'+27 71 228 9940',email:'lerato.molefe@outlook.com',birthday:'1993-05-31',notes:'Interested in installation'},
+        {id:'BD-015',name:'Palesa Sithole',type:'Customer',phone:'+27 83 770 2214',email:'palesa.sithole@gmail.com',birthday:'1986-06-03',notes:'Repeat maintenance client'},
+        {id:'BD-016',name:'Thabo Dlamini',type:'Technician',phone:'+27 73 502 1188',email:'thabo.dlamini@robustvent.co.za',birthday:'1991-06-10',notes:'Field technician'},
+        {id:'BD-017',name:'Wayne Ferreira',type:'Customer',phone:'+27 79 441 6630',email:'wayne.ferreira@gmail.com',birthday:'1984-06-21',notes:'Referred by Marco da Silva'}
+      ];
+      showcaseBds.forEach(nb=>{
+        if(!s.birthdays.find(b=>b.id===nb.id)) s.birthdays.push(nb);
+      });
+      s.birthdayCounter=Math.max(s.birthdayCounter||0,17);
       return s;
     }
     return defaultState();
@@ -1483,7 +1495,7 @@ function defaultState(){
   const dd=(n)=>{const t=new Date();t.setDate(t.getDate()+n);return t.toISOString().split('T')[0];};
   return {
   weekOffset:0,
-  techCounter:6, customerCounter:9, leadCounter:14, jobCounter:11, quoteCounter:8, invoiceCounter:9, planCounter:6, referralCounter:8, birthdayCounter:12,
+  techCounter:6, customerCounter:9, leadCounter:14, jobCounter:11, quoteCounter:8, invoiceCounter:9, planCounter:6, referralCounter:8, birthdayCounter:17,
   techs:[
     {id:'T1',name:'Sipho Nkosi',    phone:'+27 82 411 0023',spec:'AC Installation',  cert:'Senior Technician', jobs:14,active:true},
     {id:'T2',name:'Thabo Dlamini',  phone:'+27 73 502 1188',spec:'Refrigeration',    cert:'Technician',        jobs:9, active:true},
@@ -1583,7 +1595,12 @@ function defaultState(){
     {id:'BD-009',name:'Nomsa Mahlangu',type:'Lead',phone:'+27 79 228 3310',email:'nomsa.mahlangu@gmail.com',birthday:'1982-12-20',notes:''},
     {id:'BD-010',name:'Ruan van Wyk',type:'Technician',phone:'+27 61 887 4400',email:'ruan.vanwyk@robustvent.co.za',birthday:'1987-01-14',notes:''},
     {id:'BD-011',name:'Heinrich Swanepoel',type:'Customer',phone:'+27 82 003 4421',email:'hswanepoel@swanlaw.co.za',birthday:'1981-02-28',notes:'Law firm client'},
-    {id:'BD-012',name:'Zanele Khumalo',type:'Lead',phone:'+27 73 519 8840',email:'zanele@zkcatering.co.za',birthday:'1990-04-05',notes:'Catering company lead'}
+    {id:'BD-012',name:'Zanele Khumalo',type:'Lead',phone:'+27 73 519 8840',email:'zanele@zkcatering.co.za',birthday:'1990-04-05',notes:'Catering company lead'},
+    {id:'BD-013',name:'Bongani Mthembu',type:'Customer',phone:'+27 82 334 7710',email:'bongani.mthembu@gmail.com',birthday:'1988-05-29',notes:'Birthday TODAY 🎂'},
+    {id:'BD-014',name:'Lerato Molefe',type:'Lead',phone:'+27 71 228 9940',email:'lerato.molefe@outlook.com',birthday:'1993-05-31',notes:'Interested in installation'},
+    {id:'BD-015',name:'Palesa Sithole',type:'Customer',phone:'+27 83 770 2214',email:'palesa.sithole@gmail.com',birthday:'1986-06-03',notes:'Repeat maintenance client'},
+    {id:'BD-016',name:'Thabo Dlamini',type:'Technician',phone:'+27 73 502 1188',email:'thabo.dlamini@robustvent.co.za',birthday:'1991-06-10',notes:'Field technician'},
+    {id:'BD-017',name:'Wayne Ferreira',type:'Customer',phone:'+27 79 441 6630',email:'wayne.ferreira@gmail.com',birthday:'1984-06-21',notes:'Referred by Marco da Silva'}
   ]
   };
 }
@@ -1708,7 +1725,12 @@ function seed(){
     {id:'BD-009',name:'Nomsa Mahlangu',type:'Lead',phone:'+27 79 228 3310',email:'nomsa.mahlangu@gmail.com',birthday:'1982-12-20',notes:''},
     {id:'BD-010',name:'Ruan van Wyk',type:'Technician',phone:'+27 61 887 4400',email:'ruan.vanwyk@robustvent.co.za',birthday:'1987-01-14',notes:''},
     {id:'BD-011',name:'Heinrich Swanepoel',type:'Customer',phone:'+27 82 003 4421',email:'hswanepoel@swanlaw.co.za',birthday:'1981-02-28',notes:'Law firm client'},
-    {id:'BD-012',name:'Zanele Khumalo',type:'Lead',phone:'+27 73 519 8840',email:'zanele@zkcatering.co.za',birthday:'1990-04-05',notes:'Catering company lead'}
+    {id:'BD-012',name:'Zanele Khumalo',type:'Lead',phone:'+27 73 519 8840',email:'zanele@zkcatering.co.za',birthday:'1990-04-05',notes:'Catering company lead'},
+    {id:'BD-013',name:'Bongani Mthembu',type:'Customer',phone:'+27 82 334 7710',email:'bongani.mthembu@gmail.com',birthday:'1988-05-29',notes:'Birthday TODAY 🎂'},
+    {id:'BD-014',name:'Lerato Molefe',type:'Lead',phone:'+27 71 228 9940',email:'lerato.molefe@outlook.com',birthday:'1993-05-31',notes:'Interested in installation'},
+    {id:'BD-015',name:'Palesa Sithole',type:'Customer',phone:'+27 83 770 2214',email:'palesa.sithole@gmail.com',birthday:'1986-06-03',notes:'Repeat maintenance client'},
+    {id:'BD-016',name:'Thabo Dlamini',type:'Technician',phone:'+27 73 502 1188',email:'thabo.dlamini@robustvent.co.za',birthday:'1991-06-10',notes:'Field technician'},
+    {id:'BD-017',name:'Wayne Ferreira',type:'Customer',phone:'+27 79 441 6630',email:'wayne.ferreira@gmail.com',birthday:'1984-06-21',notes:'Referred by Marco da Silva'}
   ];
 
   saveState();
