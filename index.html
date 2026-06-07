@@ -269,12 +269,18 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
 .alert-bar .alert-sub{font-size:11px;color:var(--muted);margin-top:2px}
 
 /* ── DOCUMENT OVERLAY ── */
-#doc-overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.85);display:none;overflow-y:auto;padding:32px 20px 60px;backdrop-filter:blur(12px)}
+/* In-page detail view (sits over content area; sidebar + topbar stay visible) */
+#doc-overlay{position:fixed;top:56px;left:248px;right:0;bottom:0;z-index:90;background:var(--bg);display:none;overflow-y:auto;padding:22px 28px 60px}
 #doc-overlay.open{display:block}
-.doc-paper{background:#fff;border-radius:14px;padding:48px 52px;box-shadow:0 10px 40px rgba(0,0,0,.3);color:#1a1a1a;font-family:'Instrument Sans',system-ui,sans-serif;position:relative}
+body.sb-collapsed #doc-overlay{left:0}
+.doc-paper{background:#fff;border-radius:14px;padding:48px 52px;box-shadow:var(--shadow-card);color:#1a1a1a;font-family:'Instrument Sans',system-ui,sans-serif;position:relative}
 .doc-detail-bar{max-width:1200px;margin:0 auto 16px;display:flex;align-items:center;gap:14px}
-.doc-detail-bar .doc-title-tag{font-size:14px;font-weight:800;color:#fff;letter-spacing:.5px}
+.doc-detail-bar .doc-title-tag{font-size:15px;font-weight:800;color:var(--white);letter-spacing:.3px}
 .doc-detail-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.7fr 1fr;gap:20px;align-items:start}
+.doc-detail-left{display:flex;flex-direction:column;gap:18px;min-width:0}
+.doc-payments-card{background:var(--card);border:1px solid var(--b1);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow-card)}
+.doc-payments-card h3{font-size:14px;font-weight:800;color:var(--white);margin:0 0 12px;display:flex;justify-content:space-between;align-items:center}
+.doc-payments-card h3 .paid-amt{font-size:13px;color:var(--green)}
 .doc-side{display:flex;flex-direction:column;gap:16px}
 .doc-side-card{background:var(--card);border:1px solid var(--b1);border-radius:16px;padding:18px 18px;box-shadow:var(--shadow-card)}
 .doc-side-card h3{font-size:14px;font-weight:800;color:var(--white);margin:0 0 14px}
@@ -503,8 +509,8 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
   /* Section headers */
   .section-hdr{flex-wrap:wrap;gap:8px}
 
-  /* Document overlay */
-  #doc-overlay{padding:12px 8px 40px}
+  /* Document detail panel */
+  #doc-overlay{left:0;top:52px;padding:14px 14px calc(90px + env(safe-area-inset-bottom))}
   .doc-detail-grid{grid-template-columns:1fr;gap:14px}
   .doc-detail-bar,.doc-detail-grid{max-width:100%}
   .doc-side{order:-1}
@@ -542,9 +548,9 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
 
 @media print{
   body>*:not(#doc-overlay){display:none!important}
-  #doc-overlay{position:static!important;background:white!important;padding:0!important;display:block!important}
-  .doc-detail-bar,.doc-side{display:none!important}
-  .doc-detail-grid{display:block!important;max-width:100%!important}
+  #doc-overlay{position:static!important;inset:auto!important;background:white!important;padding:0!important;display:block!important}
+  .doc-detail-bar,.doc-side,.doc-payments-card{display:none!important}
+  .doc-detail-grid,.doc-detail-left{display:block!important;max-width:100%!important}
   .doc-paper{box-shadow:none!important;border-radius:0!important;padding:32px 40px!important;max-width:100%!important}
 }
 
@@ -2021,6 +2027,7 @@ const PAGE_SUBS = {
 
 function nav(page){
   if(window.innerWidth<=768) closeMobileSidebar();
+  if(document.getElementById('doc-overlay').classList.contains('open')) closeDoc();
   // Role guards
   if(page==='users' && !isRole('boss')){ return; }
 
@@ -3248,10 +3255,9 @@ function openQuoteDoc(id){
     +'<div class="doc-bank-row"><strong>Acc Type:</strong> '+COMPANY.accType+'</div>'
     +'<div class="doc-bank-row"><strong>Branch Code:</strong> '+COMPANY.branchCode+'</div></div></div>'
     +'<div class="doc-footer-strip"><span>'+COMPANY.name+' &nbsp;|&nbsp; '+COMPANY.vat+'</span><span>This quote is valid for 30 days unless otherwise stated</span></div>';
-  document.getElementById('doc-overlay-tag').textContent='Quote '+q.id;
+  document.getElementById('doc-overlay-tag').textContent='Quote '+q.id+' — '+q.customer;
   _setDocShareBtns(q.customer,q.phone||'',q.email||'',q.id,'quote',q.total);
-  document.getElementById('doc-overlay').classList.add('open');
-  document.getElementById('doc-overlay').scrollTop=0;
+  _openDocPanel('Quote '+q.id, q.customer);
   _renderDocSidebar();
 }
 
@@ -3304,10 +3310,9 @@ function openInvoiceDoc(id){
     +'<div class="doc-bank-row"><strong>Tel:</strong> '+COMPANY.tel+'</div>'
     +'<div class="doc-bank-row"><strong>Web:</strong> '+COMPANY.web+'</div></div></div>'
     +'<div class="doc-footer-strip"><span>'+COMPANY.name+' &nbsp;|&nbsp; '+COMPANY.vat+'</span><span>Thank you for your business!</span></div>';
-  document.getElementById('doc-overlay-tag').textContent='Invoice '+i.id;
+  document.getElementById('doc-overlay-tag').textContent='Invoice '+i.id+' — '+i.customer;
   _setDocShareBtns(i.customer,i.phone||'',i.email||'',i.id,'invoice',i.amount);
-  document.getElementById('doc-overlay').classList.add('open');
-  document.getElementById('doc-overlay').scrollTop=0;
+  _openDocPanel('Invoice '+i.id, i.customer);
   _renderDocSidebar();
 }
 
@@ -3321,10 +3326,8 @@ function _renderDocSidebar(){
 
   if(_docContext.type==='invoice'){
     const inv=state.invoices.find(x=>x.id===_docContext.id); if(!inv) return;
-    const bal=invoiceBalance(inv); const paid=invoicePaid(inv.id);
+    const bal=invoiceBalance(inv);
     const statusOpts=INVOICE_FILTERS.map(s=>`<option ${inv.status===s?'selected':''}>${s}</option>`).join('');
-    const hist=(state.payments||[]).filter(p=>p.invoiceId===inv.id);
-    const histHtml=hist.length?hist.map(p=>`<div class="doc-pay-hist-item"><span>${fmtDate(p.date)} · <span class="pay-pill">${esc(p.method)}</span>${p.reference?' · '+esc(p.reference):''}</span><span style="display:flex;align-items:center;gap:8px"><b style="color:var(--green)">${fmtR(p.amount)}</b><button class="doc-pay-del" title="Remove" onclick="deletePayment('${esc(p.id)}')">✕</button></span></div>`).join(''):'<div style="font-size:12.5px;color:var(--muted)">No payments yet.</div>';
     side.innerHTML=`
       <div class="doc-side-card">
         <h3>Actions</h3>
@@ -3333,7 +3336,6 @@ function _renderDocSidebar(){
           <select class="form-input" id="doc-status-sel">${statusOpts}</select>
           <button class="btn btn-brand btn-sm" onclick="setDocStatus()">Set</button>
         </div>
-        <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-bottom:8px" onclick="closeDoc();editInvoice('${esc(inv.id)}')">Edit invoice</button>
         <button class="btn btn-red btn-sm" style="width:100%;justify-content:center" onclick="if(confirm('Delete this invoice and its payments?')){closeDoc();deleteInvoice('${esc(inv.id)}');}">Delete invoice</button>
       </div>
       <div class="doc-side-card">
@@ -3347,10 +3349,6 @@ function _renderDocSidebar(){
           <input class="form-input" id="doc-pay-ref" placeholder="Ref (optional)">
         </div>
         <button class="btn btn-green" style="width:100%;justify-content:center" onclick="submitDocPayment()">Record payment</button>
-        <div class="doc-pay-hist">
-          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:6px">Payments · ${fmtR(paid)} paid</div>
-          ${histHtml}
-        </div>
       </div>`;
   } else {
     const q=state.quotes.find(x=>x.id===_docContext.id); if(!q) return;
@@ -3363,11 +3361,46 @@ function _renderDocSidebar(){
           <select class="form-input" id="doc-status-sel">${statusOpts}</select>
           <button class="btn btn-brand btn-sm" onclick="setDocStatus()">Set</button>
         </div>
-        <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-bottom:8px" onclick="closeDoc();editQuote('${esc(q.id)}')">Edit quote</button>
         <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-bottom:8px" onclick="closeDoc();convertToJob('${esc(q.id)}')">Convert to Job</button>
         <button class="btn btn-red btn-sm" style="width:100%;justify-content:center" onclick="if(confirm('Delete this quote?')){closeDoc();deleteQuote('${esc(q.id)}');}">Delete quote</button>
       </div>`;
   }
+  _renderPaymentsCard();
+}
+
+// Payments card below the document (invoices only) — MasterP style
+function _renderPaymentsCard(){
+  const card=document.getElementById('doc-payments-card');
+  if(!card) return;
+  if(!_docContext || _docContext.type!=='invoice'){ card.style.display='none'; card.innerHTML=''; return; }
+  const inv=state.invoices.find(x=>x.id===_docContext.id);
+  if(!inv){ card.style.display='none'; return; }
+  const paid=invoicePaid(inv.id);
+  const hist=(state.payments||[]).filter(p=>p.invoiceId===inv.id);
+  const rows=hist.length
+    ? hist.map(p=>`<tr>
+        <td data-label="Date">${fmtDate(p.date)}</td>
+        <td data-label="Method"><span class="pay-pill">${esc(p.method)}</span></td>
+        <td data-label="Reference">${esc(p.reference||'—')}</td>
+        <td data-label="Amount" style="font-weight:700;color:var(--green)">${fmtR(p.amount)}</td>
+        <td data-label="" style="text-align:right"><button class="doc-pay-del" title="Remove" onclick="deletePayment('${esc(p.id)}')">✕</button></td>
+      </tr>`).join('')
+    : '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:18px">No payments recorded yet.</td></tr>';
+  card.style.display='';
+  card.innerHTML=`
+    <h3>Payments <span class="paid-amt">${fmtR(paid)} paid</span></h3>
+    <table>
+      <thead><tr><th>Date</th><th>Method</th><th>Reference</th><th>Amount</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// Edit from the detail top bar
+function docEdit(){
+  if(!_docContext) return;
+  const id=_docContext.id, type=_docContext.type;
+  closeDoc();
+  if(type==='invoice') editInvoice(id); else editQuote(id);
 }
 
 function setDocStatus(){
@@ -3483,8 +3516,22 @@ async function _shareDoc(kind){ // kind: 'whatsapp' | 'email'
   }
 }
 
+let _docPrevTitle=null, _docPrevSub=null;
+function _openDocPanel(title, sub){
+  // remember current topbar text, then show invoice/quote in topbar (MasterP style)
+  const t=document.getElementById('tb-title'), s=document.getElementById('tb-sub');
+  if(_docPrevTitle===null){ _docPrevTitle=t.textContent; _docPrevSub=s.textContent; }
+  t.textContent=title; s.textContent=sub||'';
+  const ov=document.getElementById('doc-overlay');
+  ov.classList.add('open'); ov.scrollTop=0;
+}
 function closeDoc(){
   document.getElementById('doc-overlay').classList.remove('open');
+  if(_docPrevTitle!==null){
+    document.getElementById('tb-title').textContent=_docPrevTitle;
+    document.getElementById('tb-sub').textContent=_docPrevSub;
+    _docPrevTitle=null; _docPrevSub=null;
+  }
   _docContext=null;
 }
 function docDownload(){
@@ -3749,6 +3796,7 @@ function toggleSidebar(){
   const sb=document.querySelector('.sb'), main=document.querySelector('.content');
   const collapsed=sb.classList.toggle('collapsed');
   main.classList.toggle('expanded', collapsed);
+  document.body.classList.toggle('sb-collapsed', collapsed);
   document.getElementById('sb-show-btn').style.display = collapsed?'inline-flex':'none';
   localStorage.setItem('rv_sidebar', collapsed?'1':'0');
 }
@@ -3757,6 +3805,7 @@ function applySidebarState(){
   if(localStorage.getItem('rv_sidebar')==='1'){
     document.querySelector('.sb').classList.add('collapsed');
     document.querySelector('.content').classList.add('expanded');
+    document.body.classList.add('sb-collapsed');
     const btn=document.getElementById('sb-show-btn'); if(btn) btn.style.display='inline-flex';
   }
 }
@@ -3788,9 +3837,13 @@ function syncTabbar(page){
   <div class="doc-detail-bar">
     <button class="btn btn-ghost btn-sm" onclick="closeDoc()"><svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Back</button>
     <span class="doc-title-tag" id="doc-overlay-tag">Document</span>
+    <button class="btn btn-ghost btn-sm" id="doc-edit-btn" style="margin-left:auto" onclick="docEdit()">Edit</button>
   </div>
   <div class="doc-detail-grid">
-    <div class="doc-paper" id="doc-paper"></div>
+    <div class="doc-detail-left">
+      <div class="doc-paper" id="doc-paper"></div>
+      <div class="doc-payments-card" id="doc-payments-card" style="display:none"></div>
+    </div>
     <div class="doc-side" id="doc-side"></div>
   </div>
   <!-- hidden share triggers used by _setDocShareBtns -->
