@@ -235,6 +235,16 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
 .badge.red{background:rgba(239,68,68,.12);color:#FCA5A5}
 .badge.amber{background:rgba(245,158,11,.12);color:#FCD34D}
 .badge.purple{background:rgba(139,92,246,.12);color:#A78BFA}
+/* ── STATUS FILTER BAR (MasterP-style) ── */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.filter-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid var(--b1);background:var(--card2);color:var(--muted);transition:all .15s;font-family:inherit;white-space:nowrap}
+.filter-btn:hover{border-color:var(--ba);color:var(--text)}
+.filter-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.filter-btn .pill{background:rgba(0,0,0,.18);color:inherit;font-size:10.5px;font-weight:800;padding:1px 7px;border-radius:20px;min-width:18px;text-align:center}
+.filter-btn.active .pill{background:rgba(255,255,255,.25)}
+.pay-pill{display:inline-block;background:var(--card3);color:var(--muted);font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px}
+.page-sub-metric{font-size:13px;color:var(--muted);margin:-6px 0 16px}
+.page-sub-metric strong{color:var(--text);font-weight:800}
 .tech-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--brand),#8B1E14);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
 .alert-bar{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
 .alert-bar .alert-icon{font-size:18px;flex-shrink:0}
@@ -571,6 +581,7 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
 
     <div class="nav-sec">Finance</div>
     <div class="ni" onclick="nav('invoices')"><span class="ni-icon"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span> Invoices <span class="nb red" id="nb-inv">0</span></div>
+    <div class="ni" onclick="nav('payments')"><span class="ni-icon"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg></span> Payments</div>
 
     <div class="nav-sec">Customers</div>
     <div class="ni" onclick="nav('customers')"><span class="ni-icon"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 00-1-1h-2a1 1 0 00-1 1v5m4 0H9"/></svg></span> Customers</div>
@@ -712,9 +723,11 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
         <div class="section-title">Quotes</div>
         <button class="btn btn-brand btn-sm" onclick="openModal('modal-new-quote')"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> New Quote</button>
       </div>
+      <div class="page-sub-metric" id="quotes-sub"></div>
+      <div class="filter-bar" id="quotes-filter"></div>
       <div class="card" style="padding:0;overflow:hidden">
         <table>
-          <thead><tr><th>Quote #</th><th>Customer</th><th>Service</th><th>Amount</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Quote #</th><th>Customer</th><th>Service</th><th>Status</th><th>Valid Until</th><th>Total</th><th>Actions</th></tr></thead>
           <tbody id="quotes-tbody"></tbody>
         </table>
       </div>
@@ -765,10 +778,26 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
         <div class="section-title">Invoices</div>
         <button class="btn btn-brand btn-sm" onclick="openModal('modal-new-invoice')"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> New Invoice</button>
       </div>
+      <div class="page-sub-metric" id="invoices-sub"></div>
+      <div class="filter-bar" id="invoices-filter"></div>
       <div class="card" style="padding:0;overflow:hidden">
         <table>
-          <thead><tr><th>Invoice #</th><th>Customer</th><th>Job</th><th>Amount</th><th>Issued</th><th>Due</th><th>Status</th></tr></thead>
+          <thead><tr><th>Invoice #</th><th>Customer</th><th>Status</th><th>Issued</th><th>Due</th><th>Total</th><th>Balance</th><th>Actions</th></tr></thead>
           <tbody id="invoices-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ PAYMENTS ══ -->
+    <div class="page" id="page-payments">
+      <div class="section-hdr">
+        <div class="section-title">Payments</div>
+      </div>
+      <div class="page-sub-metric" id="payments-sub"></div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <table>
+          <thead><tr><th>Date</th><th>Invoice</th><th>Customer</th><th>Method</th><th>Reference</th><th>Amount</th></tr></thead>
+          <tbody id="payments-tbody"></tbody>
         </table>
       </div>
     </div>
@@ -1136,6 +1165,33 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
     <div style="display:flex;gap:10px;justify-content:flex-end">
       <button class="btn btn-ghost" onclick="closeModal('modal-new-invoice')">Cancel</button>
       <button class="btn btn-brand" onclick="addInvoice()">Create Invoice</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MODAL: RECORD PAYMENT ══════════ -->
+<div class="overlay" id="modal-record-payment">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-title">
+      <span id="rp-title">Record Payment</span>
+      <button class="modal-close" onclick="closeModal('modal-record-payment')">✕</button>
+    </div>
+    <input type="hidden" id="rp-inv-id">
+    <div id="rp-inv-meta" style="font-size:12.5px;color:var(--muted);margin-bottom:14px"></div>
+    <div class="form-grid">
+      <div class="form-row"><label class="form-label">Amount (R)</label><input class="form-input" type="number" step="0.01" id="rp-amount" placeholder="0.00"></div>
+      <div class="form-row"><label class="form-label">Method</label>
+        <select class="form-input" id="rp-method"><option>EFT</option><option>Card</option><option>Cash</option><option>Other</option></select>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row"><label class="form-label">Date</label><input class="form-input" type="date" id="rp-date"></div>
+      <div class="form-row"><label class="form-label">Reference</label><input class="form-input" id="rp-ref" placeholder="Optional"></div>
+    </div>
+    <div id="rp-history" style="margin:6px 0 14px"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal('modal-record-payment')">Cancel</button>
+      <button class="btn btn-green" onclick="submitPayment()">Record Payment</button>
     </div>
   </div>
 </div>
@@ -1585,6 +1641,8 @@ function loadState(){
       if(!s.birthdays) s.birthdays=[];
       if(!s.referralCounter) s.referralCounter=s.referrals.length;
       if(!s.birthdayCounter) s.birthdayCounter=s.birthdays.length;
+      if(!s.payments) s.payments=[];
+      if(!s.paymentCounter) s.paymentCounter=s.payments.length;
       // Inject showcase birthdays (upcoming dates) if not already present
       const showcaseBds=[
         {id:'BD-013',name:'Bongani Mthembu',type:'Customer',phone:'+27 82 334 7710',email:'bongani.mthembu@gmail.com',birthday:'1988-05-29',notes:'Birthday TODAY 🎂'},
@@ -1608,7 +1666,7 @@ function defaultState(){
   const dd=(n)=>{const t=new Date();t.setDate(t.getDate()+n);return t.toISOString().split('T')[0];};
   return {
   weekOffset:0,
-  techCounter:6, customerCounter:9, leadCounter:14, jobCounter:11, quoteCounter:8, invoiceCounter:9, planCounter:6, referralCounter:8, birthdayCounter:17,
+  techCounter:6, customerCounter:9, leadCounter:14, jobCounter:11, quoteCounter:8, invoiceCounter:9, planCounter:6, referralCounter:8, birthdayCounter:17, paymentCounter:6,
   techs:[
     {id:'T1',name:'Sipho Nkosi',    phone:'+27 82 411 0023',spec:'AC Installation',  cert:'Senior Technician', jobs:14,active:true},
     {id:'T2',name:'Thabo Dlamini',  phone:'+27 73 502 1188',spec:'Refrigeration',    cert:'Technician',        jobs:9, active:true},
@@ -1677,6 +1735,13 @@ function defaultState(){
     {id:'INV-007',customer:'Greenleaf Property Group',phone:'+27 11 568 4000',email:'maintenance@greenleaf.co.za',address:'Rosebank Office Tower, JHB',job:'JOB-004',service:'Duct Cleaning',   labour:14000,materials:5000, amount:21850,issued:dd(-40),due:dd(-10),desc:'Full duct clean floors 3 to 8. Antibacterial fog treatment applied. Post-clean inspection report with photographs issued.',notes:'This invoice is now overdue. Please arrange urgent payment to avoid service suspension.',status:'Sent'},
     {id:'INV-008',customer:'Platinum Foods (Pty) Ltd',phone:'+27 11 845 9900',email:'plant@platinumfoods.co.za',address:'Industria West, JHB',       job:'JOB-005',service:'Refrigeration',    labour:18000,materials:13000,amount:35650,issued:dd(-50),due:dd(-20),desc:'Cold room compressor bank upgrade Phase 1. Materials supply, installation labour, commissioning and initial refrigerant charge.',notes:'This is the 50% deposit invoice. Balance due on completion and sign-off.',status:'Paid'},
     {id:'INV-009',customer:'Nokwanda Dube',           phone:'+27 64 572 1103',email:'nokwanda.dube@gmail.com',  address:'33 Jacaranda Cres, Centurion',job:'JOB-011',service:'Repair',          labour:1600, materials:700,  amount:2645, issued:dd(0),  due:dd(30), desc:'Indoor wall unit repair — fan blade replacement and full system inspection. Drain pan clean included.',notes:'Cash or EFT accepted on day of completion.',status:'Draft'}
+  ],
+  payments:[
+    {id:'PMT-001',invoiceId:'INV-001',customer:'Greenleaf Property Group',amount:74750,method:'EFT', reference:'EFT-88213', date:dd(-20)},
+    {id:'PMT-002',invoiceId:'INV-005',customer:'Marco da Silva',          amount:3105, method:'Card',reference:'CARD-4471',  date:dd(-32)},
+    {id:'PMT-003',invoiceId:'INV-008',customer:'Platinum Foods (Pty) Ltd',amount:35650,method:'EFT', reference:'EFT-90042', date:dd(-46)},
+    {id:'PMT-004',invoiceId:'INV-004',customer:'Sandton Office Park',     amount:20000,method:'EFT', reference:'EFT-91188', date:dd(-6)},
+    {id:'PMT-005',invoiceId:'INV-002',customer:'Bryanston Medical Centre',amount:5000, method:'Cash',reference:'',           date:dd(-9)}
   ],
   plans:[
     {id:'MP-001',customer:'Bryanston Medical Centre',plan:'Premium (4x per year)', units:6, fee:3200,nextService:dd(28), status:'Active'},
@@ -1803,6 +1868,15 @@ function seed(){
     {id:'INV-009',customer:'Nokwanda Dube',           phone:'+27 64 572 1103',email:'nokwanda.dube@gmail.com',  address:'33 Jacaranda Cres, Centurion',job:'JOB-011',service:'Repair',          labour:1600, materials:700,  amount:2645, issued:dd(0),  due:dd(30), desc:'Noisy indoor unit — fan blade replacement and full inspection.',notes:'EFT or cash on completion.',status:'Draft'}
   ];
 
+  state.paymentCounter=6;
+  state.payments=[
+    {id:'PMT-001',invoiceId:'INV-001',customer:'Greenleaf Property Group',amount:74750,method:'EFT', reference:'EFT-88213', date:dd(-20)},
+    {id:'PMT-002',invoiceId:'INV-005',customer:'Marco da Silva',          amount:3105, method:'Card',reference:'CARD-4471',  date:dd(-32)},
+    {id:'PMT-003',invoiceId:'INV-008',customer:'Platinum Foods (Pty) Ltd',amount:35650,method:'EFT', reference:'EFT-90042', date:dd(-46)},
+    {id:'PMT-004',invoiceId:'INV-004',customer:'Sandton Office Park',     amount:20000,method:'EFT', reference:'EFT-91188', date:dd(-6)},
+    {id:'PMT-005',invoiceId:'INV-002',customer:'Bryanston Medical Centre',amount:5000, method:'Cash',reference:'',           date:dd(-9)}
+  ];
+
   state.planCounter=6;
   state.plans=[
     {id:'MP-001',customer:'Bryanston Medical Centre',plan:'Premium (4x per year)', units:6, fee:3200,nextService:dd(28), status:'Active'},
@@ -1874,14 +1948,14 @@ const IC = {
 const PAGE_TITLES = {
   dashboard:'Dashboard', leads:'Leads', pipeline:'Pipeline', quotes:'Quotes',
   jobs:'Active Jobs', schedule:'Schedule', technicians:'Technicians',
-  invoices:'Invoices', customers:'Customers', maintenance:'Maintenance Plans',
+  invoices:'Invoices', payments:'Payments', customers:'Customers', maintenance:'Maintenance Plans',
   referrals:'Referrals', birthdays:'Birthdays',
   users:'User Accounts', account:'My Account'
 };
 const PAGE_SUBS = {
   dashboard:'Overview & KPIs', leads:'All enquiries', pipeline:'Sales funnel',
   quotes:'Pending approvals', jobs:'Field operations', schedule:'Team calendar',
-  technicians:'Field team', invoices:'Billing', customers:'Client database',
+  technicians:'Field team', invoices:'Billing', payments:'Received payments', customers:'Client database',
   maintenance:'Service contracts', referrals:'Track & reward referrals', birthdays:'Client & team birthdays',
   users:'Manage CRM users', account:'Profile & security',
 };
@@ -1907,6 +1981,7 @@ function nav(page){
   if(page==='account') renderAccountPage();
   if(page==='referrals') renderReferrals();
   if(page==='birthdays') renderBirthdays();
+  if(page==='payments') renderPayments();
   render();
 }
 
@@ -1924,6 +1999,27 @@ function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 function fmt(d){ return d?d.split('T')[0]:''; }
 function fmtDate(d){ if(!d)return'—'; const dt=new Date(d); return dt.toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'}); }
 function fmtR(n){ return 'R '+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:0,maximumFractionDigits:0}); }
+// Sum of payments recorded against an invoice
+function invoicePaid(invId){
+  return (state.payments||[]).filter(p=>p.invoiceId===invId).reduce((s,p)=>s+(Number(p.amount)||0),0);
+}
+function invoiceBalance(inv){
+  return Math.max(0, (Number(inv.amount)||0) - invoicePaid(inv.id));
+}
+function invoiceDisplayStatus(inv){
+  const today=new Date().toISOString().split('T')[0];
+  const bal=invoiceBalance(inv);
+  if(bal<=0.009 && (inv.amount||0)>0) return 'Paid';
+  if(inv.status==='Cancelled') return 'Cancelled';
+  if(inv.due && inv.due<today) return 'Overdue';
+  return inv.status||'Draft';
+}
+function quoteDisplayStatus(q){
+  const today=new Date().toISOString().split('T')[0];
+  if(['Approved','Converted','Declined'].includes(q.status)) return q.status;
+  if(q.validUntil && q.validUntil<today) return 'Expired';
+  return q.status||'Pending';
+}
 function techName(id){ const t=state.techs.find(t=>t.id===id); return t?t.name:'Unassigned'; }
 function serviceLabel(s){
   const m={install:'AC Installation',maintenance:'Maintenance',repair:'Repair',duct:'Duct Cleaning',airquality:'Air Quality',ventilation:'Ventilation',refrigeration:'Refrigeration'};
@@ -1932,7 +2028,8 @@ function serviceLabel(s){
 function statusBadge(s){
   const m={'New Lead':'new','Contacted':'contacted','Site Visit':'contacted','Quote Sent':'quoted',
     'Approved':'approved','Scheduled':'scheduled','In Progress':'inprogress','Completed':'done',
-    'Pending':'quoted','Sent':'contacted','Paid':'done','Overdue':'urgent','Active':'done','Draft':'new'};
+    'Pending':'quoted','Sent':'contacted','Paid':'done','Overdue':'urgent','Active':'done','Draft':'new',
+    'Declined':'urgent','Converted':'done','Expired':'urgent','Cancelled':'new'};
   return `<span class="tag ${m[s]||'new'}">${esc(s)}</span>`;
 }
 function svcIcon(s){
@@ -2278,6 +2375,7 @@ function render(){
   renderSchedule();
   renderTechs();
   renderInvoices();
+  renderPayments();
   renderCustomers();
   renderPlans();
   renderReferrals();
@@ -2533,25 +2631,41 @@ function renderPipeline(){
 }
 
 // ── QUOTES ────────────────────────────────────
+let _quoteFilter='all'; let _invoiceFilter='all';
+const QUOTE_FILTERS=['Draft','Pending','Sent','Approved','Declined','Converted'];
+function setQuoteFilter(f){ _quoteFilter=f; renderQuotes(); }
 function renderQuotes(){
+  const quotes=state.quotes||[];
+  const openVal=quotes.filter(q=>['Draft','Pending','Sent'].includes(quoteDisplayStatus(q))).reduce((s,q)=>s+(q.total||0),0);
+  const subEl=document.getElementById('quotes-sub');
+  if(subEl) subEl.innerHTML=`<strong>${fmtR(openVal)}</strong> in open quotes`;
+  const fbar=document.getElementById('quotes-filter');
+  if(fbar){
+    const counts={}; QUOTE_FILTERS.forEach(s=>counts[s]=quotes.filter(q=>quoteDisplayStatus(q)===s).length);
+    fbar.innerHTML=`<div class="filter-btn ${_quoteFilter==='all'?'active':''}" onclick="setQuoteFilter('all')">All <span class="pill">${quotes.length}</span></div>`+
+      QUOTE_FILTERS.map(s=>`<div class="filter-btn ${_quoteFilter===s?'active':''}" onclick="setQuoteFilter('${s}')">${s} <span class="pill">${counts[s]||0}</span></div>`).join('');
+  }
+  const list=_quoteFilter==='all'?quotes:quotes.filter(q=>quoteDisplayStatus(q)===_quoteFilter);
   const tbody=document.getElementById('quotes-tbody');
-  if(!state.quotes.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">No quotes yet.</td></tr>'; return; }
-  tbody.innerHTML=state.quotes.map(q=>`
-    <tr>
-      <td data-label="ID" style="font-weight:700;color:var(--brand)">${esc(q.id)}</td>
+  if(!list.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px">No quotes in this view.</td></tr>'; return; }
+  tbody.innerHTML=list.map(q=>{
+    const ds=quoteDisplayStatus(q);
+    return `<tr>
+      <td data-label="Quote #" style="font-weight:700;color:var(--brand)">${esc(q.id)}</td>
       <td data-label="Customer" style="color:var(--white);font-weight:600">${esc(q.customer)}</td>
-      <td data-label="Service">${esc(q.service)}</td>
-      <td data-label="Amount" style="color:var(--brand);font-weight:700">${fmtR(q.total)}</td>
-      <td data-label="Date">${fmtDate(q.date)}</td>
-      <td data-label="Status">${statusBadge(q.status)}</td>
+      <td data-label="Service">${esc(q.service||'—')}</td>
+      <td data-label="Status">${statusBadge(ds)}</td>
+      <td data-label="Valid Until">${fmtDate(q.validUntil)}</td>
+      <td data-label="Total" style="font-weight:700">${fmtR(q.total)}</td>
       <td data-label="Actions" style="white-space:nowrap;display:flex;gap:4px;flex-wrap:wrap;align-items:center">
         <button class="btn btn-ghost btn-sm" onclick="openQuoteDoc('${esc(q.id)}')" title="View / Send">${IC.note} View</button>
-        ${q.status==='Pending'?`<button class="btn btn-green btn-sm" onclick="approveQuote('${esc(q.id)}')">${IC.check}</button>`:''}
+        ${q.status==='Pending'?`<button class="btn btn-green btn-sm" onclick="approveQuote('${esc(q.id)}')" title="Approve">${IC.check}</button>`:''}
         <button class="btn btn-ghost btn-sm" onclick="convertToJob('${esc(q.id)}')" title="Convert to Job">${IC.arrowR}</button>
-        <button class="btn btn-ghost btn-sm" onclick="editQuote('${esc(q.id)}')">${IC.edit}</button>
-        <button class="btn btn-red btn-sm" onclick="deleteQuote('${esc(q.id)}')">${IC.trash}</button>
+        <button class="btn btn-ghost btn-sm" onclick="editQuote('${esc(q.id)}')" title="Edit">${IC.edit}</button>
+        <button class="btn btn-red btn-sm" onclick="deleteQuote('${esc(q.id)}')" title="Delete">${IC.trash}</button>
       </td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 
 function approveQuote(id){
@@ -2744,25 +2858,37 @@ function renderTechs(){
 }
 
 // ── INVOICES ──────────────────────────────────
+const INVOICE_FILTERS=['Draft','Sent','Paid','Overdue','Cancelled'];
+function setInvoiceFilter(f){ _invoiceFilter=f; renderInvoices(); }
 function renderInvoices(){
+  const invs=state.invoices||[];
+  const outstanding=invs.reduce((s,i)=>s+invoiceBalance(i),0);
+  const subEl=document.getElementById('invoices-sub');
+  if(subEl) subEl.innerHTML=`<strong>${fmtR(outstanding)}</strong> outstanding`;
+  const fbar=document.getElementById('invoices-filter');
+  if(fbar){
+    const counts={}; INVOICE_FILTERS.forEach(s=>counts[s]=invs.filter(i=>invoiceDisplayStatus(i)===s).length);
+    fbar.innerHTML=`<div class="filter-btn ${_invoiceFilter==='all'?'active':''}" onclick="setInvoiceFilter('all')">All <span class="pill">${invs.length}</span></div>`+
+      INVOICE_FILTERS.map(s=>`<div class="filter-btn ${_invoiceFilter===s?'active':''}" onclick="setInvoiceFilter('${s}')">${s} <span class="pill">${counts[s]||0}</span></div>`).join('');
+  }
+  const list=_invoiceFilter==='all'?invs:invs.filter(i=>invoiceDisplayStatus(i)===_invoiceFilter);
   const tbody=document.getElementById('invoices-tbody');
-  if(!state.invoices.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">No invoices yet.</td></tr>'; return; }
-  const today=new Date().toISOString().split('T')[0];
-  tbody.innerHTML=state.invoices.map(i=>{
-    const overdue=i.due&&i.due<today&&i.status!=='Paid';
-    const displayStatus=overdue?'Overdue':i.status;
+  if(!list.length){ tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:30px">No invoices in this view.</td></tr>'; return; }
+  tbody.innerHTML=list.map(i=>{
+    const ds=invoiceDisplayStatus(i);
+    const bal=invoiceBalance(i);
     return `<tr>
-      <td data-label="ID" style="font-weight:700;color:var(--brand)">${esc(i.id)}</td>
+      <td data-label="Invoice #" style="font-weight:700;color:var(--brand)">${esc(i.id)}</td>
       <td data-label="Customer" style="color:var(--white);font-weight:600">${esc(i.customer)}</td>
-      <td data-label="Job">${esc(i.job||'—')}</td>
-      <td data-label="Amount" style="color:var(--brand);font-weight:700">${fmtR(i.amount)}</td>
+      <td data-label="Status">${statusBadge(ds)}</td>
       <td data-label="Issued">${fmtDate(i.issued)}</td>
-      <td data-label="Due Date" style="${overdue?'color:var(--red)':''}">${fmtDate(i.due)}</td>
+      <td data-label="Due" style="${ds==='Overdue'?'color:var(--red)':''}">${fmtDate(i.due)}</td>
+      <td data-label="Total">${fmtR(i.amount)}</td>
+      <td data-label="Balance" style="font-weight:700;color:${bal>0?'var(--red)':'var(--green)'}">${fmtR(bal)}</td>
       <td data-label="Actions" style="white-space:nowrap;display:flex;gap:4px;flex-wrap:wrap;align-items:center">
         <button class="btn btn-ghost btn-sm" onclick="openInvoiceDoc('${esc(i.id)}')" title="View / Send">${IC.note} View</button>
-        ${statusBadge(displayStatus)}
-        ${i.status!=='Paid'?`<button class="btn btn-green btn-sm" onclick="markPaid('${esc(i.id)}')">${IC.check}</button>`:''}
-        <button class="btn btn-red btn-sm" onclick="deleteInvoice('${esc(i.id)}')">${IC.trash}</button>
+        ${bal>0?`<button class="btn btn-green btn-sm" onclick="openRecordPayment('${esc(i.id)}')" title="Record Payment">${IC.check} Pay</button>`:''}
+        <button class="btn btn-red btn-sm" onclick="deleteInvoice('${esc(i.id)}')" title="Delete">${IC.trash}</button>
       </td>
     </tr>`;
   }).join('');
@@ -2770,6 +2896,59 @@ function renderInvoices(){
 function markPaid(id){
   const inv=state.invoices.find(x=>x.id===id);
   if(inv){ inv.status='Paid'; saveState(); render(); }
+}
+
+// ── PAYMENTS ──────────────────────────────────
+function renderPayments(){
+  const pays=(state.payments||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const now=new Date(); const ym=now.toISOString().slice(0,7);
+  const monthTotal=pays.filter(p=>(p.date||'').slice(0,7)===ym).reduce((s,p)=>s+(Number(p.amount)||0),0);
+  const allTotal=pays.reduce((s,p)=>s+(Number(p.amount)||0),0);
+  const subEl=document.getElementById('payments-sub');
+  if(subEl) subEl.innerHTML=`<strong>${fmtR(monthTotal)}</strong> this month · <strong>${fmtR(allTotal)}</strong> all-time`;
+  const tbody=document.getElementById('payments-tbody');
+  if(!tbody) return;
+  if(!pays.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px">No payments recorded yet.</td></tr>'; return; }
+  tbody.innerHTML=pays.map(p=>`
+    <tr style="cursor:pointer" onclick="openInvoiceDoc('${esc(p.invoiceId)}')">
+      <td data-label="Date">${fmtDate(p.date)}</td>
+      <td data-label="Invoice" style="font-weight:700;color:var(--brand)">${esc(p.invoiceId)}</td>
+      <td data-label="Customer" style="color:var(--white);font-weight:600">${esc(p.customer)}</td>
+      <td data-label="Method"><span class="pay-pill">${esc(p.method)}</span></td>
+      <td data-label="Reference">${esc(p.reference||'—')}</td>
+      <td data-label="Amount" style="font-weight:700;color:var(--green)">${fmtR(p.amount)}</td>
+    </tr>`).join('');
+}
+function openRecordPayment(invId){
+  const inv=state.invoices.find(x=>x.id===invId); if(!inv) return;
+  const bal=invoiceBalance(inv);
+  document.getElementById('rp-inv-id').value=invId;
+  document.getElementById('rp-title').textContent='Record Payment — '+invId;
+  document.getElementById('rp-inv-meta').innerHTML=`<strong style="color:var(--text)">${esc(inv.customer)}</strong> · Total ${fmtR(inv.amount)} · Balance due <strong style="color:var(--red)">${fmtR(bal)}</strong>`;
+  document.getElementById('rp-amount').value=bal>0?bal:'';
+  document.getElementById('rp-method').value='EFT';
+  document.getElementById('rp-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('rp-ref').value='';
+  const hist=(state.payments||[]).filter(p=>p.invoiceId===invId);
+  const hEl=document.getElementById('rp-history');
+  hEl.innerHTML=hist.length?('<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:6px">Payments received</div>'+hist.map(p=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--b2);font-size:12.5px"><span>${fmtDate(p.date)} · <span class="pay-pill">${esc(p.method)}</span></span><span style="font-weight:700;color:var(--green)">${fmtR(p.amount)}</span></div>`).join('')):'';
+  openModal('modal-record-payment');
+}
+function submitPayment(){
+  const invId=document.getElementById('rp-inv-id').value;
+  const inv=state.invoices.find(x=>x.id===invId); if(!inv) return;
+  const amount=parseFloat(document.getElementById('rp-amount').value)||0;
+  if(amount<=0){ alert('Enter a payment amount.'); return; }
+  state.paymentCounter=(state.paymentCounter||0)+1;
+  state.payments.unshift({
+    id:'PMT-'+String(state.paymentCounter).padStart(3,'0'),
+    invoiceId:invId, customer:inv.customer, amount,
+    method:document.getElementById('rp-method').value,
+    reference:document.getElementById('rp-ref').value.trim(),
+    date:document.getElementById('rp-date').value||new Date().toISOString().split('T')[0]
+  });
+  if(invoiceBalance(inv)<=0.009) inv.status='Paid';
+  saveState(); closeModal('modal-record-payment'); render();
 }
 
 // ── CUSTOMERS ─────────────────────────────────
