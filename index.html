@@ -10,6 +10,7 @@
 <title>Robust Vent — CRM & Business OS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 :root{
   --bg:     #181618;
@@ -3394,29 +3395,70 @@ function deletePayment(pmtId){
   render();
 }
 
+let _docShare=null;
 function _setDocShareBtns(customer,phone,email,docId,type,amount){
-  const waMsg=encodeURIComponent('Hi '+customer+', please find your '+type+' '+docId+' from Robust Vent for '+fmtCurr(amount)+' attached. '+
-    (type==='invoice'?'Kindly use '+docId+' as your payment reference. ':'')+
-    (type==='quote'?'To accept or discuss, please reply here or call us. ':'')+
-    'Contact us: '+COMPANY.tel+' | '+COMPANY.email);
-  const cleanPhone=(phone||'').replace(/\D/g,'');
-  const waBtn=document.getElementById('doc-wa-btn');
-  if(cleanPhone){
-    waBtn.onclick=function(){ window.open('https://wa.me/'+cleanPhone+'?text='+waMsg,'_blank'); };
-    waBtn.style.opacity='1'; waBtn.disabled=false;
-  } else {
-    waBtn.onclick=function(){ alert('No phone number saved for this customer.\nEdit the '+type+' record to add one.'); };
-    waBtn.style.opacity='0.45';
+  // Store share context; actual sending handled by docWhatsApp/docEmail (with PDF)
+  _docShare={ customer, phone:(phone||''), email:(email||''), docId, type, amount };
+}
+
+// Build the plain-text message that accompanies the PDF
+function _docMessage(){
+  const s=_docShare; if(!s) return '';
+  const first=(s.customer||'there').split(' ')[0];
+  if(s.type==='invoice'){
+    return 'Hi '+first+', please find attached your invoice '+s.docId+' from Robust Vent for '+fmtCurr(s.amount)+'. '+
+      'Kindly use '+s.docId+' as your payment reference. Banking: '+COMPANY.bank+', Acc '+COMPANY.accNo+', Branch '+COMPANY.branchCode+'. '+
+      'Queries: '+COMPANY.tel+' | '+COMPANY.email;
   }
-  const emailSubj=encodeURIComponent((type==='invoice'?'Invoice ':'Quotation ')+docId+' — Robust Vent');
-  const emailBody=encodeURIComponent('Dear '+customer+',\n\nPlease find your '+(type==='invoice'?'invoice':'quote')+' '+docId+' from Robust Vent for '+fmtCurr(amount)+'.\n\n'+(type==='invoice'?'Payment reference: '+docId+'\nBank: '+COMPANY.bank+'\nAccount: '+COMPANY.accNo+'\nBranch: '+COMPANY.branchCode+'\n\n':'To accept this quote, simply reply to this email or contact us below.\n\n')+'Kind regards,\nRobust Vent Team\n'+COMPANY.tel+' | '+COMPANY.email);
-  const emailBtn=document.getElementById('doc-email-btn');
-  if(email){
-    emailBtn.onclick=function(){ window.open('mailto:'+email+'?subject='+emailSubj+'&body='+emailBody,'_self'); };
-    emailBtn.style.opacity='1'; emailBtn.disabled=false;
+  return 'Hi '+first+', please find attached your quotation '+s.docId+' from Robust Vent for '+fmtCurr(s.amount)+'. '+
+    'To accept or discuss, reply here or call '+COMPANY.tel+'. Thank you!';
+}
+
+// Generate a PDF Blob from the on-screen document
+function _docPdfBlob(){
+  const el=document.getElementById('doc-paper');
+  const name=(_docShare?_docShare.docId:'document')+'.pdf';
+  const opt={ margin:6, filename:name, image:{type:'jpeg',quality:0.98},
+    html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff'},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'} };
+  return html2pdf().set(opt).from(el).outputPdf('blob');
+}
+
+async function _shareDoc(kind){ // kind: 'whatsapp' | 'email'
+  const s=_docShare; if(!s){ return; }
+  if(typeof html2pdf==='undefined'){ docDownload(); return; }
+  const fname=s.docId+'.pdf';
+  const msg=_docMessage();
+  let blob;
+  try{ blob=await _docPdfBlob(); }
+  catch(e){ docDownload(); return; }
+  const file=new File([blob],fname,{type:'application/pdf'});
+
+  // 1) Native share sheet with the PDF attached (mobile: WhatsApp / Mail show up)
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{
+      await navigator.share({ files:[file], title:s.docId,
+        text:msg + (s.type==='invoice'&&kind==='email'?'':'') });
+      return;
+    }catch(e){ if(e && e.name==='AbortError') return; /* else fall through */ }
+  }
+
+  // 2) Desktop fallback — download the PDF, then open the channel with the message
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=fname;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+
+  if(kind==='whatsapp'){
+    const cleanPhone=(s.phone||'').replace(/\D/g,'');
+    const text=encodeURIComponent(msg+'\n\n(Your '+fname+' has just downloaded — please attach it to this chat.)');
+    const waUrl=cleanPhone?('https://wa.me/'+cleanPhone+'?text='+text):('https://wa.me/?text='+text);
+    setTimeout(()=>window.open(waUrl,'_blank'),600);
   } else {
-    emailBtn.onclick=function(){ alert('No email address saved for this customer.\nEdit the '+type+' record to add one.'); };
-    emailBtn.style.opacity='0.45';
+    const subj=encodeURIComponent((s.type==='invoice'?'Invoice ':'Quotation ')+s.docId+' — Robust Vent');
+    const body=encodeURIComponent(msg+'\n\n(Your '+fname+' has just downloaded — please attach it to this email.)\n\nKind regards,\nRobust Vent Team');
+    const to=s.email||'';
+    setTimeout(()=>window.open('mailto:'+to+'?subject='+subj+'&body='+body,'_self'),600);
   }
 }
 
@@ -3424,9 +3466,16 @@ function closeDoc(){
   document.getElementById('doc-overlay').classList.remove('open');
   _docContext=null;
 }
-function docDownload(){ window.print(); }
-function docWhatsApp(){ document.getElementById('doc-wa-btn').click(); }
-function docEmail(){ document.getElementById('doc-email-btn').click(); }
+function docDownload(){
+  if(typeof html2pdf==='undefined'){ window.print(); return; }
+  const el=document.getElementById('doc-paper');
+  const name=(_docShare?_docShare.docId:'document')+'.pdf';
+  html2pdf().set({ margin:6, filename:name, image:{type:'jpeg',quality:0.98},
+    html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff'},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'} }).from(el).save();
+}
+function docWhatsApp(){ _shareDoc('whatsapp'); }
+function docEmail(){ _shareDoc('email'); }
 document.getElementById('doc-overlay').addEventListener('click',function(e){ if(e.target===this) closeDoc(); });
 
 
