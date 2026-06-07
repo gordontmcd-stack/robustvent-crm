@@ -785,7 +785,7 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
       <div class="filter-bar" id="quotes-filter"></div>
       <div class="card" style="padding:0;overflow:hidden">
         <table>
-          <thead><tr><th>Quote #</th><th>Customer</th><th>Service</th><th>Status</th><th>Valid Until</th><th>Total</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Quote #</th><th>Customer</th><th>Service</th><th>Status</th><th>Valid Until</th><th>Total</th></tr></thead>
           <tbody id="quotes-tbody"></tbody>
         </table>
       </div>
@@ -834,13 +834,13 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
     <div class="page" id="page-invoices">
       <div class="section-hdr">
         <div class="section-title">Invoices</div>
-        <button class="btn btn-brand btn-sm" onclick="openModal('modal-new-invoice')"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> New Invoice</button>
+        <button class="btn btn-brand btn-sm" onclick="_resetInvoiceModal();openModal('modal-new-invoice')"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> New Invoice</button>
       </div>
       <div class="page-sub-metric" id="invoices-sub"></div>
       <div class="filter-bar" id="invoices-filter"></div>
       <div class="card" style="padding:0;overflow:hidden">
         <table>
-          <thead><tr><th>Invoice #</th><th>Customer</th><th>Status</th><th>Issued</th><th>Due</th><th>Total</th><th>Balance</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Invoice #</th><th>Customer</th><th>Status</th><th>Issued</th><th>Due</th><th>Total</th><th>Balance</th></tr></thead>
           <tbody id="invoices-tbody"></tbody>
         </table>
       </div>
@@ -1189,7 +1189,8 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
 <!-- New Invoice -->
 <div class="overlay" id="modal-new-invoice">
   <div class="modal" style="max-width:600px">
-    <div class="modal-title"><span>New Invoice</span> <button class="modal-close" onclick="closeModal('modal-new-invoice')">✕</button></div>
+    <div class="modal-title"><span id="ni2-modal-title">New Invoice</span> <button class="modal-close" onclick="closeModal('modal-new-invoice')">✕</button></div>
+    <input type="hidden" id="ni2-edit-id">
     <div class="form-grid">
       <div class="form-row"><label class="form-label">Customer Name</label><input class="form-input" id="ni2-customer" placeholder="Full name or company"></div>
       <div class="form-row"><label class="form-label">Customer Phone</label><input class="form-input" id="ni2-phone" placeholder="+27 ..."></div>
@@ -1222,7 +1223,7 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
     <div class="form-row"><label class="form-label">Notes / Payment Terms</label><textarea class="form-input" id="ni2-notes" placeholder="e.g. Payment due within 30 days of invoice date..." rows="2"></textarea></div>
     <div style="display:flex;gap:10px;justify-content:flex-end">
       <button class="btn btn-ghost" onclick="closeModal('modal-new-invoice')">Cancel</button>
-      <button class="btn btn-brand" onclick="addInvoice()">Create Invoice</button>
+      <button class="btn btn-brand" id="ni2-submit-btn" onclick="addInvoice()">Create Invoice</button>
     </div>
   </div>
 </div>
@@ -2384,16 +2385,42 @@ function calcInvoice(){
   const m=parseFloat(document.getElementById('ni2-materials').value)||0;
   document.getElementById('ni2-total-display').textContent='R '+((l+m)*1.15).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
+function editInvoice(id){
+  const i=state.invoices.find(x=>x.id===id); if(!i) return;
+  document.getElementById('ni2-edit-id').value=id;
+  document.getElementById('ni2-customer').value=i.customer||'';
+  document.getElementById('ni2-phone').value=i.phone||'';
+  document.getElementById('ni2-email').value=i.email||'';
+  document.getElementById('ni2-address').value=i.address||'';
+  document.getElementById('ni2-job').value=i.job||'';
+  document.getElementById('ni2-service').value=i.service||'AC Installation';
+  document.getElementById('ni2-labour').value=i.labour||'';
+  document.getElementById('ni2-materials').value=i.materials||'';
+  document.getElementById('ni2-issued').value=i.issued||'';
+  document.getElementById('ni2-due').value=i.due||'';
+  document.getElementById('ni2-desc').value=i.desc||'';
+  document.getElementById('ni2-notes').value=i.notes||'';
+  calcInvoice();
+  document.getElementById('ni2-modal-title').textContent='Edit Invoice';
+  document.getElementById('ni2-submit-btn').textContent='Save Changes';
+  openModal('modal-new-invoice');
+}
+function _resetInvoiceModal(){
+  document.getElementById('ni2-edit-id').value='';
+  ['ni2-customer','ni2-phone','ni2-email','ni2-address','ni2-job','ni2-labour','ni2-materials','ni2-issued','ni2-due','ni2-desc','ni2-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ni2-total-display').textContent='R 0.00';
+  document.getElementById('ni2-modal-title').textContent='New Invoice';
+  document.getElementById('ni2-submit-btn').textContent='Create Invoice';
+}
 function addInvoice(){
   const customer=document.getElementById('ni2-customer').value.trim();
   if(!customer){ alert('Customer name is required'); return; }
+  const editId=document.getElementById('ni2-edit-id').value.trim();
   const labour=parseFloat(document.getElementById('ni2-labour').value)||0;
   const materials=parseFloat(document.getElementById('ni2-materials').value)||0;
   const amount=(labour+materials)*1.15;
   const issued=document.getElementById('ni2-issued').value||new Date().toISOString().split('T')[0];
-  state.invoiceCounter++;
-  state.invoices.unshift({
-    id:'INV-'+String(state.invoiceCounter).padStart(3,'0'),
+  const vals={
     customer, phone:document.getElementById('ni2-phone').value,
     email:document.getElementById('ni2-email').value,
     address:document.getElementById('ni2-address').value,
@@ -2402,12 +2429,16 @@ function addInvoice(){
     labour, materials, amount, issued,
     due:document.getElementById('ni2-due').value,
     desc:document.getElementById('ni2-desc').value,
-    notes:document.getElementById('ni2-notes').value,
-    status:'Draft'
-  });
+    notes:document.getElementById('ni2-notes').value
+  };
+  if(editId){
+    state.invoices=state.invoices.map(x=>x.id===editId?{...x,...vals}:x);
+  } else {
+    state.invoiceCounter++;
+    state.invoices.unshift({ id:'INV-'+String(state.invoiceCounter).padStart(3,'0'), ...vals, status:'Draft' });
+  }
   saveState(); closeModal('modal-new-invoice');
-  ['ni2-customer','ni2-phone','ni2-email','ni2-address','ni2-job','ni2-labour','ni2-materials','ni2-desc','ni2-notes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('ni2-total-display').textContent='R 0.00';
+  _resetInvoiceModal();
   render();
 }
 function deleteInvoice(id){
@@ -2707,7 +2738,7 @@ function renderQuotes(){
   }
   const list=_quoteFilter==='all'?quotes:quotes.filter(q=>quoteDisplayStatus(q)===_quoteFilter);
   const tbody=document.getElementById('quotes-tbody');
-  if(!list.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px">No quotes in this view.</td></tr>'; return; }
+  if(!list.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:30px">No quotes in this view.</td></tr>'; return; }
   tbody.innerHTML=list.map(q=>{
     const ds=quoteDisplayStatus(q);
     return `<tr style="cursor:pointer" onclick="openQuoteDoc('${esc(q.id)}')">
@@ -2717,13 +2748,6 @@ function renderQuotes(){
       <td data-label="Status">${statusBadge(ds)}</td>
       <td data-label="Valid Until">${fmtDate(q.validUntil)}</td>
       <td data-label="Total" style="font-weight:700">${fmtR(q.total)}</td>
-      <td data-label="Actions" style="white-space:nowrap;display:flex;gap:4px;flex-wrap:wrap;align-items:center" onclick="event.stopPropagation()">
-        <button class="btn btn-ghost btn-sm" onclick="openQuoteDoc('${esc(q.id)}')" title="View / Send">${IC.note} View</button>
-        ${q.status==='Pending'?`<button class="btn btn-green btn-sm" onclick="approveQuote('${esc(q.id)}')" title="Approve">${IC.check}</button>`:''}
-        <button class="btn btn-ghost btn-sm" onclick="convertToJob('${esc(q.id)}')" title="Convert to Job">${IC.arrowR}</button>
-        <button class="btn btn-ghost btn-sm" onclick="editQuote('${esc(q.id)}')" title="Edit">${IC.edit}</button>
-        <button class="btn btn-red btn-sm" onclick="deleteQuote('${esc(q.id)}')" title="Delete">${IC.trash}</button>
-      </td>
     </tr>`;
   }).join('');
 }
@@ -2933,7 +2957,7 @@ function renderInvoices(){
   }
   const list=_invoiceFilter==='all'?invs:invs.filter(i=>invoiceDisplayStatus(i)===_invoiceFilter);
   const tbody=document.getElementById('invoices-tbody');
-  if(!list.length){ tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:30px">No invoices in this view.</td></tr>'; return; }
+  if(!list.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px">No invoices in this view.</td></tr>'; return; }
   tbody.innerHTML=list.map(i=>{
     const ds=invoiceDisplayStatus(i);
     const bal=invoiceBalance(i);
@@ -2945,11 +2969,6 @@ function renderInvoices(){
       <td data-label="Due" style="${ds==='Overdue'?'color:var(--red)':''}">${fmtDate(i.due)}</td>
       <td data-label="Total">${fmtR(i.amount)}</td>
       <td data-label="Balance" style="font-weight:700;color:${bal>0?'var(--red)':'var(--green)'}">${fmtR(bal)}</td>
-      <td data-label="Actions" style="white-space:nowrap;display:flex;gap:4px;flex-wrap:wrap;align-items:center" onclick="event.stopPropagation()">
-        <button class="btn btn-ghost btn-sm" onclick="openInvoiceDoc('${esc(i.id)}')" title="View / Send">${IC.note} View</button>
-        ${bal>0?`<button class="btn btn-green btn-sm" onclick="openRecordPayment('${esc(i.id)}')" title="Record Payment">${IC.check} Pay</button>`:''}
-        <button class="btn btn-red btn-sm" onclick="deleteInvoice('${esc(i.id)}')" title="Delete">${IC.trash}</button>
-      </td>
     </tr>`;
   }).join('');
 }
@@ -3314,6 +3333,7 @@ function _renderDocSidebar(){
           <select class="form-input" id="doc-status-sel">${statusOpts}</select>
           <button class="btn btn-brand btn-sm" onclick="setDocStatus()">Set</button>
         </div>
+        <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-bottom:8px" onclick="closeDoc();editInvoice('${esc(inv.id)}')">Edit invoice</button>
         <button class="btn btn-red btn-sm" style="width:100%;justify-content:center" onclick="if(confirm('Delete this invoice and its payments?')){closeDoc();deleteInvoice('${esc(inv.id)}');}">Delete invoice</button>
       </div>
       <div class="doc-side-card">
@@ -3343,6 +3363,7 @@ function _renderDocSidebar(){
           <select class="form-input" id="doc-status-sel">${statusOpts}</select>
           <button class="btn btn-brand btn-sm" onclick="setDocStatus()">Set</button>
         </div>
+        <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-bottom:8px" onclick="closeDoc();editQuote('${esc(q.id)}')">Edit quote</button>
         <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;margin-bottom:8px" onclick="closeDoc();convertToJob('${esc(q.id)}')">Convert to Job</button>
         <button class="btn btn-red btn-sm" style="width:100%;justify-content:center" onclick="if(confirm('Delete this quote?')){closeDoc();deleteQuote('${esc(q.id)}');}">Delete quote</button>
       </div>`;
