@@ -362,10 +362,28 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
 }
 [data-theme="light"] body{background:var(--bg)}
 [data-theme="light"] .btn-brand{color:#fff}
+[data-theme="light"] .nb{color:#fff}
+[data-theme="light"] .nb.amber{color:#1A1416}
 [data-theme="light"] .wa-btn{color:#fff}
 [data-theme="light"] .sb{box-shadow:2px 0 24px rgba(0,0,0,.06)}
 [data-theme="light"] .theme-swatch.dark{border-color:rgba(0,0,0,.12)}
-[data-theme="light"] th{background:rgba(0,0,0,.025)}
+/* Flip white overlays → dark overlays so they're visible on light bg */
+[data-theme="light"] th{background:rgba(0,0,0,.03)}
+[data-theme="light"] .btn-ghost{background:rgba(0,0,0,.04)}
+[data-theme="light"] .kcol-cnt,
+[data-theme="light"] .tag.new,
+[data-theme="light"] .modal-close,
+[data-theme="light"] .pb-wrap,
+[data-theme="light"] .bd-days.upcoming,
+[data-theme="light"] #sb-hamburger,
+[data-theme="light"] .sb-foot button{background:rgba(0,0,0,.06)!important}
+[data-theme="light"] .modal-close:hover{background:rgba(0,0,0,.1)}
+[data-theme="light"] .search-bar{background:var(--card2)}
+[data-theme="light"] tr:hover td{background:rgba(196,69,54,.05)}
+[data-theme="light"] .ge-kpi,
+[data-theme="light"] .kcard{background:var(--card2)}
+[data-theme="light"] .stage-step.done{background:rgba(5,150,105,.12)}
+[data-theme="light"] .topbar{box-shadow:0 1px 0 rgba(0,0,0,.05)}
 
 /* ══════════════════════════════════════
    MOBILE RESPONSIVE  (≤ 768px)
