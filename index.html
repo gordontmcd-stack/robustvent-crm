@@ -311,6 +311,62 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
 .bd-days.soon{background:rgba(245,158,11,.15);color:var(--amber)}
 .bd-days.upcoming{background:rgba(255,255,255,.07);color:var(--muted)}
 
+/* ── THEME PICKER ── */
+.theme-opts{display:flex;gap:14px;flex-wrap:wrap}
+.theme-opt{flex:1;min-width:160px;border:2px solid var(--b1);border-radius:14px;padding:14px;cursor:pointer;transition:all .18s;background:var(--card2)}
+.theme-opt:hover{border-color:var(--ba)}
+.theme-opt.active{border-color:var(--brand);box-shadow:0 0 0 3px rgba(225,90,72,.15)}
+.theme-swatch{height:60px;border-radius:9px;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:10px 12px;margin-bottom:10px;overflow:hidden}
+.theme-swatch.dark{background:#181618;border:1px solid rgba(255,255,255,.08)}
+.theme-swatch.light{background:#F5F3F2;border:1px solid rgba(0,0,0,.08)}
+.theme-swatch span{height:7px;border-radius:4px;display:block}
+.theme-swatch.dark span:nth-child(1){width:70%;background:#E15A48}
+.theme-swatch.dark span:nth-child(2){width:90%;background:#3a3537}
+.theme-swatch.dark span:nth-child(3){width:55%;background:#2a2628}
+.theme-swatch.light span:nth-child(1){width:70%;background:#C44536}
+.theme-swatch.light span:nth-child(2){width:90%;background:#d8d2d0}
+.theme-swatch.light span:nth-child(3){width:55%;background:#e8e3e1}
+.theme-opt-label{display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:700;color:var(--text)}
+.theme-check{color:var(--brand);opacity:0;transition:opacity .18s}
+.theme-opt.active .theme-check{opacity:1}
+
+/* ══════════════════════════════════════
+   LIGHT THEME
+══════════════════════════════════════ */
+[data-theme="light"]{
+  --bg:     #F5F3F2;
+  --sb:     #FFFFFF;
+  --card:   #FFFFFF;
+  --card2:  #F4F0EF;
+  --card3:  #EBE5E3;
+  --topbar: rgba(255,255,255,.95);
+  --brand:  #C44536;
+  --brand2: #A8392B;
+  --brand-dk:#FFFFFF;
+  --white:  #1A1416;
+  --text:   #2A2224;
+  --muted:  #6E5E5A;
+  --muted2: #998884;
+  --green:  #059669;
+  --blue:   #2563EB;
+  --purple: #7C3AED;
+  --red:    #DC2626;
+  --amber:  #D97706;
+  --teal:   #0891B2;
+  --b1: rgba(196,69,54,.20);
+  --b2: rgba(0,0,0,.07);
+  --ba: rgba(196,69,54,.32);
+  --shadow-card: 0 1px 3px rgba(0,0,0,.08),0 4px 14px rgba(0,0,0,.06);
+  --shadow-hover:0 4px 8px rgba(0,0,0,.1),0 12px 28px rgba(0,0,0,.1);
+  --shadow-lg:   0 8px 16px rgba(0,0,0,.12),0 24px 56px rgba(0,0,0,.14);
+}
+[data-theme="light"] body{background:var(--bg)}
+[data-theme="light"] .btn-brand{color:#fff}
+[data-theme="light"] .wa-btn{color:#fff}
+[data-theme="light"] .sb{box-shadow:2px 0 24px rgba(0,0,0,.06)}
+[data-theme="light"] .theme-swatch.dark{border-color:rgba(0,0,0,.12)}
+[data-theme="light"] th{background:rgba(0,0,0,.025)}
+
 /* ══════════════════════════════════════
    MOBILE RESPONSIVE  (≤ 768px)
 ══════════════════════════════════════ */
@@ -800,6 +856,24 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
           <div class="form-row"><label class="form-label">Confirm New Password</label><input class="form-input" type="password" id="ap-conf" placeholder="Repeat new password"></div>
           <div id="ap-msg" style="font-size:12px;margin-bottom:12px;display:none"></div>
           <button class="btn btn-brand" onclick="changeOwnPassword()">Update Password</button>
+        </div>
+        <div class="card" style="grid-column:1/-1">
+          <div class="card-title">Appearance</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Choose how RobustVent CRM looks on this device.</div>
+          <div class="theme-opts">
+            <div class="theme-opt" id="theme-opt-dark" onclick="setTheme('dark')">
+              <div class="theme-swatch dark"><span></span><span></span><span></span></div>
+              <div class="theme-opt-label">Dark
+                <svg class="theme-check" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              </div>
+            </div>
+            <div class="theme-opt" id="theme-opt-light" onclick="setTheme('light')">
+              <div class="theme-swatch light"><span></span><span></span><span></span></div>
+              <div class="theme-opt-label">Light
+                <svg class="theme-check" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1408,6 +1482,27 @@ function renderAccountPage(){
       <div><strong style="color:var(--text)">Account ID:</strong> ${esc(u.id)}</div>
       <div><strong style="color:var(--text)">Member since:</strong> ${esc(u.createdAt||'—')}</div>
     </div>`;
+  syncThemeUI();
+}
+
+// ── THEME ─────────────────────────────────────
+function setTheme(theme){
+  if(theme==='light') document.documentElement.setAttribute('data-theme','light');
+  else document.documentElement.removeAttribute('data-theme');
+  localStorage.setItem('rv_theme', theme);
+  syncThemeUI();
+}
+function loadTheme(){
+  const t = localStorage.getItem('rv_theme') || 'dark';
+  if(t==='light') document.documentElement.setAttribute('data-theme','light');
+  else document.documentElement.removeAttribute('data-theme');
+}
+function syncThemeUI(){
+  const t = localStorage.getItem('rv_theme') || 'dark';
+  const dark = document.getElementById('theme-opt-dark');
+  const light = document.getElementById('theme-opt-light');
+  if(dark) dark.classList.toggle('active', t==='dark');
+  if(light) light.classList.toggle('active', t==='light');
 }
 
 function changeOwnPassword(){
@@ -3211,6 +3306,7 @@ function init(){
 }
 
 // Startup
+loadTheme();
 if(initAuth()){ init(); }
 
 function toggleMobileSidebar(){
