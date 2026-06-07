@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#181618">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Robust Vent — CRM & Business OS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -38,12 +42,18 @@
 body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',system-ui,sans-serif;display:flex;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
 /* ── SIDEBAR ── */
-.sb{width:248px;min-height:100vh;background:var(--sb);border-right:1px solid var(--b1);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;box-shadow:2px 0 32px rgba(0,0,0,.7)}
+.sb{width:248px;height:100vh;height:100dvh;background:var(--sb);border-right:1px solid var(--b1);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;box-shadow:2px 0 32px rgba(0,0,0,.7);transition:transform .25s cubic-bezier(.4,0,.2,1)}
+.sb.collapsed{transform:translateX(-248px)}
 .sb-logo{padding:18px 18px 14px;border-bottom:1px solid var(--b2);display:flex;align-items:center;gap:10px}
 .sb-logo-icon{width:44px;height:44px;border-radius:10px;overflow:hidden;flex-shrink:0;box-shadow:0 2px 14px rgba(196,69,54,.4);background:#1A0A08}
 .sb-logo-text{font-size:14px;font-weight:900;color:var(--white);letter-spacing:1.5px}
 .sb-logo-sub{font-size:9px;color:var(--muted);font-weight:500;letter-spacing:.5px;margin-top:1px}
-.sb-nav{flex:1;padding:6px 10px;overflow-y:auto}
+.sb-collapse-btn{margin-left:auto;background:none;border:none;cursor:pointer;padding:6px;border-radius:7px;color:var(--muted2);display:flex;transition:all .15s}
+.sb-collapse-btn:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.sb-nav{flex:1;min-height:0;padding:6px 10px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--muted2) transparent}
+.sb-nav::-webkit-scrollbar{width:7px}
+.sb-nav::-webkit-scrollbar-thumb{background:var(--muted2);border-radius:8px}
+.sb-nav::-webkit-scrollbar-thumb:hover{background:var(--muted)}
 .nav-sec{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:2.4px;padding:16px 8px 5px;margin-bottom:2px}
 .ni{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;border-radius:9px;font-size:13px;font-weight:500;color:var(--muted);transition:all .15s;user-select:none}
 .ni:hover{background:rgba(196,69,54,.06);color:var(--text)}
@@ -58,14 +68,20 @@ body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',system
 .ua{width:32px;height:32px;background:linear-gradient(135deg,var(--brand),#8B1E14);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;box-shadow:0 2px 10px rgba(196,69,54,.3)}
 
 /* ── MAIN CONTENT ── */
-.content{margin-left:248px;flex:1;display:flex;flex-direction:column;min-height:100vh}
-.topbar{background:var(--topbar);border-bottom:1px solid var(--b1);height:56px;padding:0 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(24px) saturate(1.8)}
+.content{margin-left:248px;flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-left .25s cubic-bezier(.4,0,.2,1)}
+.content.expanded{margin-left:0}
+.topbar-accent{height:3px;background:linear-gradient(90deg,var(--brand),var(--brand2))}
+.topbar{background:var(--topbar);border-bottom:1px solid var(--b1);min-height:56px;padding:0 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(24px) saturate(1.8)}
+#sb-show-btn{display:none;background:var(--brand);border:none;cursor:pointer;padding:7px 9px;border-radius:9px;color:#fff;margin-right:4px}
 .tb-left{display:flex;align-items:center;gap:10px}
 .tb-title{font-size:15px;font-weight:700;color:var(--white);letter-spacing:-.2px}
 .tb-sep{width:1px;height:16px;background:var(--b1)}
 .tb-sub{font-size:12px;color:var(--muted)}
 .tb-actions{display:flex;gap:8px;align-items:center}
 .main{padding:24px 28px;flex:1}
+
+/* ── MOBILE BOTTOM TAB BAR (hidden on desktop) ── */
+#tabbar{display:none}
 
 /* ── BUTTONS ── */
 .btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:inherit;letter-spacing:-.1px;white-space:nowrap}
@@ -399,24 +415,38 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
    MOBILE RESPONSIVE  (≤ 768px)
 ══════════════════════════════════════ */
 @media(max-width:768px){
+  html,body{overflow-x:hidden}
 
-  /* Sidebar — off-canvas drawer */
-  .sb{transform:translateX(-248px);transition:transform .25s cubic-bezier(.4,0,.2,1);z-index:300}
+  /* Sidebar — off-canvas drawer (wider for touch) */
+  .sb{width:280px;transform:translateX(-280px);z-index:300}
+  .sb.collapsed{transform:translateX(-280px)}
   .sb.sb-open{transform:translateX(0)!important}
+  .sb-collapse-btn{display:none}
 
   /* Content — full width */
   .content{margin-left:0!important}
 
-  /* Topbar */
-  .topbar{padding:0 14px}
+  /* Prevent iOS auto-zoom on input focus (needs >=16px) */
+  .form-input,input,select,textarea{font-size:16px!important}
+
+  /* Topbar — respect notch */
+  .topbar{padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top))}
   #sb-hamburger{display:flex!important}
+  #sb-show-btn{display:none!important}
   .tb-sep{display:none}
   .tb-sub{display:none}
   .tb-actions .btn span:not(.btn svg){display:none}  /* hide text on action buttons, keep icons */
   .tb-actions .btn{padding:7px 9px}
 
-  /* Main padding */
-  .main{padding:16px 14px}
+  /* Main padding + room for bottom tab bar */
+  .main{padding:16px 14px;padding-bottom:calc(86px + env(safe-area-inset-bottom))}
+
+  /* Bottom tab bar */
+  #tabbar{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:250;background:var(--topbar);backdrop-filter:blur(14px) saturate(1.6);border-top:1px solid var(--b1);padding:6px 4px calc(6px + env(safe-area-inset-bottom));justify-content:space-around}
+  #tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:var(--muted);text-decoration:none;font-size:10px;font-weight:600;border-radius:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  #tabbar a.active{color:var(--brand)}
+  #tabbar a:active{background:rgba(196,69,54,.1)}
+  body.drawer-open #tabbar{display:none!important}
 
   /* Stat grid — 2 cols on mobile */
   .stat-grid{grid-template-columns:repeat(2,1fr);gap:10px}
@@ -565,6 +595,7 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
       <div class="sb-logo-text">ROBUST VENT</div>
       <div class="sb-logo-sub">Mechanical & Ventilation CRM</div>
     </div>
+    <button class="sb-collapse-btn" onclick="toggleSidebar()" title="Hide menu"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
   </div>
   <div class="sb-nav">
     <div class="nav-sec">Overview</div>
@@ -602,10 +633,21 @@ textarea.form-input{resize:vertical;min-height:80px;line-height:1.6}
   </div>
 </nav>
 
+<!-- ══════════ MOBILE BOTTOM TAB BAR ══════════ -->
+<nav id="tabbar">
+  <a onclick="nav('dashboard')" data-tab="dashboard"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>Home</a>
+  <a onclick="nav('pipeline')" data-tab="pipeline"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>Pipeline</a>
+  <a onclick="nav('leads')" data-tab="leads"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Leads</a>
+  <a onclick="nav('jobs')" data-tab="jobs"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>Jobs</a>
+  <a onclick="toggleMobileSidebar()"><svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>More</a>
+</nav>
+
 <!-- ══════════ MAIN ══════════ -->
 <div class="content" style="display:none">
+  <div class="topbar-accent"></div>
   <div class="topbar">
     <div class="tb-left">
+      <button id="sb-show-btn" onclick="toggleSidebar()" title="Show menu"><svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
       <button id="sb-hamburger" onclick="toggleMobileSidebar()" style="display:none;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:7px 9px;cursor:pointer;color:var(--muted);margin-right:4px"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
       <div class="tb-title" id="tb-title">Dashboard</div>
       <div class="tb-sep"></div>
@@ -1972,6 +2014,8 @@ function nav(page){
   if(ni) ni.classList.add('active');
   document.getElementById('tb-title').textContent = PAGE_TITLES[page]||page;
   document.getElementById('tb-sub').textContent   = PAGE_SUBS[page]||'';
+  syncTabbar(page);
+  if(typeof closeMobileSidebar==='function' && window.innerWidth<=768) closeMobileSidebar();
   // Reset detail views
   const jlv=document.getElementById('job-list-view'), jdv=document.getElementById('job-detail-view');
   const clv=document.getElementById('cust-list-view'), cdv=document.getElementById('cust-detail-view');
@@ -3505,17 +3549,50 @@ function init(){
 // Startup
 loadTheme();
 if(initAuth()){ init(); }
+applySidebarState();
 
+function isMobileView(){ return window.innerWidth<=768; }
+
+// ── Desktop collapse / mobile drawer ──
+function toggleSidebar(){
+  if(isMobileView()){ toggleMobileSidebar(); return; }
+  const sb=document.querySelector('.sb'), main=document.querySelector('.content');
+  const collapsed=sb.classList.toggle('collapsed');
+  main.classList.toggle('expanded', collapsed);
+  document.getElementById('sb-show-btn').style.display = collapsed?'inline-flex':'none';
+  localStorage.setItem('rv_sidebar', collapsed?'1':'0');
+}
+function applySidebarState(){
+  if(isMobileView()) return;
+  if(localStorage.getItem('rv_sidebar')==='1'){
+    document.querySelector('.sb').classList.add('collapsed');
+    document.querySelector('.content').classList.add('expanded');
+    const btn=document.getElementById('sb-show-btn'); if(btn) btn.style.display='inline-flex';
+  }
+}
 function toggleMobileSidebar(){
   const sb = document.querySelector('.sb');
   const bd = document.getElementById('sb-backdrop');
   const open = sb.classList.toggle('sb-open');
   bd.style.display = open ? 'block' : 'none';
+  document.body.classList.toggle('drawer-open', open);
 }
 function closeMobileSidebar(){
   document.querySelector('.sb').classList.remove('sb-open');
   document.getElementById('sb-backdrop').style.display='none';
+  document.body.classList.remove('drawer-open');
 }
+// Keep bottom tab bar highlight in sync with current page
+function syncTabbar(page){
+  document.querySelectorAll('#tabbar a[data-tab]').forEach(a=>{
+    a.classList.toggle('active', a.getAttribute('data-tab')===page);
+  });
+}
+// Swipe-left on the drawer closes it
+(function(){ let x0=null; const sb=document.querySelector('.sb'); if(!sb) return;
+  sb.addEventListener('touchstart',e=>{ x0=e.touches[0].clientX; },{passive:true});
+  sb.addEventListener('touchend',e=>{ if(x0!==null && e.changedTouches[0].clientX-x0<-60) closeMobileSidebar(); x0=null; },{passive:true});
+})();
 </script>
 <div id="doc-overlay">
   <div class="doc-actions-bar">
